@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Word Lab — science glossary game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#0C3A40;
+    --deeper:#062126;
+    --panel:#FBFDF7;
+    --panel-edge:#0B2E33;
+    --text:#12363B;
+    --muted:#5B7C80;
+    --lime:#B4EA2E;
+    --sun:#FFCB3D;
+    --berry:#FF3E8E;
+    --sky:#58C7F3;
+    --display:"Fredoka","Trebuchet MS",Verdana,sans-serif;
+    --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--body);
+    color:var(--panel);
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.045) 0 1px, transparent 1px 32px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 32px),
+      radial-gradient(120% 80% at 50% 0%, #12525a 0%, var(--deep) 45%, var(--deeper) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:22px 18px 48px}
+  .screen{display:none}
+  .screen.on{display:block}
+
+  /* ---------- shared bits ---------- */
+  .eyebrow{font-family:var(--body);font-weight:700;font-size:.82rem;letter-spacing:.02em;color:var(--sun)}
+  h1{
+    font-family:var(--display);font-weight:700;
+    font-size:clamp(2.6rem,13vw,4.1rem);
+    line-height:.92;margin:.15em 0 .1em;color:var(--panel);
+  }
+  h1 .dot{color:var(--lime)}
+  .lede{color:#CDE6E4;font-size:1.02rem;line-height:1.5;margin:0 0 26px;max-width:34ch}
+
+  .card{
+    background:var(--panel);color:var(--text);
+    border:3px solid var(--panel-edge);
+    border-radius:22px;
+    box-shadow:8px 9px 0 rgba(6,33,38,.55);
+    padding:22px 20px;
+  }
+
+  button{font-family:var(--body);cursor:pointer}
+  .play-btn{
+    width:100%;border:3px solid var(--panel-edge);border-radius:999px;
+    background:var(--lime);color:#0A2A0F;
+    font-family:var(--display);font-weight:600;font-size:1.45rem;
+    padding:16px 20px;box-shadow:0 7px 0 #6E9A10;
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .play-btn:active{transform:translateY(5px);box-shadow:0 2px 0 #6E9A10}
+  .ghost-btn{
+    border:2.5px solid rgba(251,253,247,.5);border-radius:999px;background:transparent;
+    color:var(--panel);font-weight:700;font-size:1rem;padding:12px 22px;
+  }
+  .ghost-btn:hover{border-color:var(--panel)}
+  :focus-visible{outline:4px solid var(--sky);outline-offset:3px}
+
+  /* ---------- settings ---------- */
+  .setting{margin:0 0 20px}
+  .setting > span{display:block;font-weight:700;font-size:.98rem;color:#DCF0EE;margin:0 0 9px}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opts button{
+    flex:1 1 auto;min-width:62px;min-height:50px;
+    border:2.5px solid rgba(251,253,247,.35);border-radius:14px;
+    background:rgba(251,253,247,.06);color:var(--panel);
+    font-family:var(--display);font-size:1.15rem;font-weight:500;
+  }
+  .opts button[aria-pressed="true"]{
+    background:var(--sun);color:#3B2A00;border-color:var(--panel-edge);
+    box-shadow:0 4px 0 #C99500;
+  }
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(251,253,247,.08);border:2px solid rgba(251,253,247,.24);
+    border-radius:999px;padding:7px 14px;font-weight:700;font-size:.95rem;color:#E6F6F3;
+  }
+  .chip b{font-variant-numeric:tabular-nums;font-size:1.05rem;color:var(--panel)}
+  .icon-btn{
+    border:2px solid rgba(251,253,247,.24);background:rgba(251,253,247,.08);
+    color:var(--panel);border-radius:999px;width:44px;height:44px;font-size:1.15rem;line-height:1;
+  }
+
+  /* ---------- play ---------- */
+  .track{display:flex;gap:5px;margin:0 0 18px}
+  .track i{flex:1;height:7px;border-radius:99px;background:rgba(251,253,247,.16)}
+  .track i.done{background:var(--lime)}
+  .track i.miss{background:var(--berry)}
+  .track i.now{background:var(--sun)}
+
+  .quiz-card{transform:rotate(-.5deg);margin-bottom:20px;position:relative}
+  .quiz-card .qno{
+    position:absolute;top:-15px;left:16px;
+    background:var(--panel-edge);color:var(--lime);
+    font-family:var(--display);font-size:.9rem;font-weight:600;
+    padding:4px 12px;border-radius:999px;
+  }
+  .ask{font-weight:700;color:var(--muted);font-size:.9rem;margin:8px 0 6px}
+  .defn{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(1.35rem,5.6vw,1.85rem);line-height:1.28;
+    margin:0;color:var(--text);
+  }
+  .answers{display:grid;gap:11px}
+  .answers.two-up{grid-template-columns:1fr 1fr}
+  .tile{
+    display:flex;align-items:center;gap:12px;text-align:left;
+    min-height:60px;padding:12px 16px;
+    background:var(--panel);color:var(--text);
+    border:3px solid var(--panel-edge);border-radius:16px;
+    box-shadow:0 6px 0 rgba(6,33,38,.45);
+    font-family:var(--display);font-weight:500;font-size:1.18rem;
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .tile .mark{
+    flex:0 0 auto;width:26px;height:26px;border-radius:8px;
+    background:rgba(18,54,59,.1);display:grid;place-items:center;
+    font-family:var(--body);font-weight:800;font-size:.9rem;color:var(--muted);
+  }
+  .pattern{
+    font-family:var(--display);font-size:1.5rem;letter-spacing:.16em;
+    color:var(--sun);margin:0 0 12px;text-align:center;word-break:break-word;
+  }
+  .pattern small{display:block;font-family:var(--body);font-weight:700;font-size:.8rem;letter-spacing:0;color:#A9C9C7;margin-top:5px}
+  .type-row{display:flex;gap:9px}
+  input.answer{
+    flex:1;min-width:0;font-family:var(--display);font-weight:500;font-size:1.25rem;
+    padding:14px 16px;border-radius:16px;border:3px solid var(--panel-edge);
+    background:var(--panel);color:var(--text);box-shadow:0 6px 0 rgba(6,33,38,.45);
+  }
+  input.answer::placeholder{color:#9DB6B8;font-weight:400}
+  input.answer.right{background:var(--lime);box-shadow:0 6px 0 #6E9A10}
+  input.answer.wrong{background:var(--berry);color:#fff;box-shadow:0 6px 0 #A81159}
+  input.answer:disabled{opacity:1}
+  .check-btn{
+    flex:0 0 auto;border:3px solid var(--panel-edge);border-radius:16px;
+    background:var(--lime);color:#0A2A0F;font-family:var(--display);font-weight:600;font-size:1.1rem;
+    padding:0 20px;box-shadow:0 6px 0 #6E9A10;
+  }
+  .check-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #6E9A10}
+  .type-actions{display:flex;gap:9px;margin-top:12px}
+  .type-actions .ghost-btn{flex:1;font-size:.95rem;padding:11px 8px}
+  .type-actions .ghost-btn:disabled{opacity:.4}
+  .tile > span:last-child{line-height:1.15;overflow-wrap:break-word;min-width:0}
+  .answers.dense{gap:8px}
+  .answers.dense .tile{min-height:52px;padding:9px 11px;gap:8px;font-size:1rem;border-width:2.5px;border-radius:13px;box-shadow:0 4px 0 rgba(6,33,38,.45)}
+  .answers.dense .tile .mark{width:21px;height:21px;border-radius:7px;font-size:.72rem}
+  .tile:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(6,33,38,.45)}
+  .tile.right{background:var(--lime);box-shadow:0 6px 0 #6E9A10}
+  .tile.right .mark{background:#0A2A0F;color:var(--lime)}
+  .tile.wrong{background:var(--berry);color:#fff;box-shadow:0 6px 0 #A81159}
+  .tile.wrong .mark{background:#fff;color:var(--berry)}
+  .tile.faded{opacity:.45}
+  .tile[disabled]{cursor:default}
+  @media (prefers-reduced-motion: no-preference){
+    .tile.shake{animation:shake .34s}
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-7px)}
+    40%{transform:translateX(6px)}
+    60%{transform:translateX(-4px)}
+    80%{transform:translateX(3px)}
+  }
+  .verdict{
+    margin:16px 0 0;min-height:28px;text-align:center;
+    font-family:var(--display);font-size:1.15rem;color:var(--sun);
+  }
+  .verdict .page{display:block;font-family:var(--body);font-weight:600;font-size:.9rem;color:#A9C9C7;margin-top:3px}
+
+  /* ---------- end ---------- */
+  .score-hero{text-align:center;padding:26px 20px 22px}
+  .score-big{font-family:var(--display);font-weight:700;font-size:4.4rem;line-height:1;color:var(--text)}
+  .score-big span{font-size:1.7rem;color:var(--muted)}
+  .grade{font-family:var(--display);font-size:1.3rem;color:var(--text);margin:6px 0 0}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:18px 0}
+  .stat{background:rgba(251,253,247,.07);border:2px solid rgba(251,253,247,.2);border-radius:14px;padding:11px 8px;text-align:center}
+  .stat b{display:block;font-family:var(--display);font-size:1.45rem;color:var(--panel);font-variant-numeric:tabular-nums}
+  .stat small{color:#A9C9C7;font-weight:700;font-size:.76rem}
+  h2{font-family:var(--display);font-weight:600;font-size:1.35rem;margin:26px 0 12px;color:var(--panel)}
+  .board{list-style:none;margin:0;padding:0}
+  .board li{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 14px;border-radius:13px;margin-bottom:7px;
+    background:rgba(251,253,247,.07);border:2px solid rgba(251,253,247,.16);
+  }
+  .board li.you{background:var(--sun);border-color:var(--panel-edge);color:#3B2A00}
+  .board .rank{font-family:var(--display);font-size:1.1rem;width:26px;flex:0 0 auto}
+  .board .who{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .board .who em{display:block;font-style:normal;font-weight:600;font-size:.78rem;opacity:.72}
+  .board .pts{font-family:var(--display);font-size:1.05rem;font-variant-numeric:tabular-nums}
+  .empty{color:#A9C9C7;font-size:.95rem;margin:0 0 8px}
+  .review{list-style:none;margin:0;padding:0}
+  .review li{background:var(--panel);color:var(--text);border-radius:14px;padding:13px 15px;margin-bottom:9px}
+  .review .d{font-size:.95rem;line-height:1.4;margin:0 0 7px}
+  .review .a{font-family:var(--display);font-size:1.05rem;margin:0}
+  .review .a s{color:var(--muted);text-decoration-thickness:2px;margin-right:8px}
+  .review .a b{color:#2E6B12}
+  .name-row{display:flex;gap:9px;margin:6px 0 20px}
+  .name-row input{
+    flex:1;min-width:0;font-family:var(--body);font-weight:700;font-size:1.05rem;
+    padding:13px 15px;border-radius:14px;border:3px solid var(--panel-edge);
+    background:var(--panel);color:var(--text);
+  }
+  .end-actions{display:flex;gap:10px;margin-top:22px}
+  .end-actions .play-btn{font-size:1.15rem;padding:14px 16px}
+  .foot{margin-top:26px;color:#8FB3B1;font-size:.82rem;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= START ================= -->
+  <section id="s-start" class="screen on">
+    <p class="eyebrow">126 words from your science glossary</p>
+    <h1>Word Lab<span class="dot">.</span></h1>
+    <p class="lede">Read what a word means, then answer it — tap the right word, or spell it out yourself.</p>
+
+    <div class="setting">
+      <span>How do you answer?</span>
+      <div class="opts" id="opt-mode" role="group" aria-label="How you answer"></div>
+    </div>
+
+    <div class="setting" id="set-choices">
+      <span>How many words to choose from?</span>
+      <div class="opts" id="opt-choices" role="group" aria-label="Words to choose from"></div>
+    </div>
+
+    <div class="setting">
+      <span>How many questions?</span>
+      <div class="opts" id="opt-length" role="group" aria-label="Number of questions"></div>
+    </div>
+
+    <button class="play-btn" id="btn-start">Start the test</button>
+    <p class="foot">Your best runs are saved on this device. Page numbers point back to the book.</p>
+  </section>
+
+  <!-- ================= PLAY ================= -->
+  <section id="s-play" class="screen">
+    <div class="toolbar">
+      <span class="chip">⏱ <b id="clock">0:00</b></span>
+      <span class="chip">✔ <b id="tally">0</b></span>
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Sound on or off">🔔</button>
+      <button class="icon-btn" id="btn-quit" title="Stop the test">✕</button>
+    </div>
+
+    <div class="track" id="track" aria-hidden="true"></div>
+
+    <div class="card quiz-card">
+      <span class="qno" id="qno">1 of 10</span>
+      <p class="ask">Which word means…</p>
+      <p class="defn" id="defn"></p>
+    </div>
+
+    <div class="answers" id="answers"></div>
+
+    <div id="typing" hidden>
+      <p class="pattern" id="pattern"></p>
+      <div class="type-row">
+        <input id="typed" class="answer" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="type the word" aria-label="Type the word">
+        <button class="check-btn" id="btn-check">Check</button>
+      </div>
+      <div class="type-actions">
+        <button class="ghost-btn" id="btn-hint">Show first letter</button>
+        <button class="ghost-btn" id="btn-skip">I don’t know</button>
+      </div>
+    </div>
+    <p class="verdict" id="verdict" aria-live="polite"></p>
+  </section>
+
+  <!-- ================= END ================= -->
+  <section id="s-end" class="screen">
+    <div class="card score-hero">
+      <div class="score-big" id="end-score">0<span id="end-of">/10</span></div>
+      <p class="grade" id="end-grade">Nice work</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b id="end-time">0:00</b><small>time</small></div>
+      <div class="stat"><b id="end-pct">0%</b><small>correct</small></div>
+      <div class="stat"><b id="end-streak">0</b><small>best streak</small></div>
+    </div>
+
+    <h2>Save your score</h2>
+    <div class="name-row">
+      <input id="end-name" maxlength="14" placeholder="Your name" autocomplete="off">
+      <button class="ghost-btn" id="btn-save">Save</button>
+    </div>
+
+    <h2>High scores</h2>
+    <p class="empty" id="board-empty">Loading…</p>
+    <ol class="board" id="board"></ol>
+
+    <div id="review-block" hidden>
+      <h2>Words to look at again</h2>
+      <ul class="review" id="review"></ul>
+    </div>
+
+    <div class="end-actions">
+      <button class="play-btn" id="btn-again">Play again</button>
+      <button class="ghost-btn" id="btn-home">Change settings</button>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ---------------- word list (word, meaning, book page) ---------------- */
+const WORDS = [
+["accurate","correct and true, more real, without mistakes",100],
+["accumulate","to increase in amount over time",106],
+["angle","the space between two lines that meet at a surface, measured in degrees",144],
+["artificial fertiliser","a factory-made fertiliser made from chemicals",92],
+["astronaut","a person who goes into space",116],
+["barrier","an object that stops things getting through or past it",26],
+["blood","a red liquid that carries food and oxygen to all parts of the body",4],
+["blood vessels","special tubes that carry the blood around the body",4],
+["boiling point","the temperature at which particles throughout a liquid become a gas",36],
+["breathing","the way we take air into our lungs and let it out again",13],
+["breathing rate","the number of times we breathe in and out in one minute",16],
+["burial","burying of sediments with many layers of sediments above",81],
+["carbon dioxide","a waste gas that the body must get rid of",4],
+["cast","a fossil where the bones of the whole animal are preserved in minerals",75],
+["circuit diagram","a diagram of a circuit using conventional symbols for all the components",131],
+["circulation","the pumping of blood all around the body",3],
+["circulatory system","the system formed by the heart, blood vessels and blood to carry food and oxygen around the body",3],
+["composition","what something is made or consists of",90],
+["compost","a natural fertiliser made of broken down dead organic matter such as dead leaves and insects",92],
+["conduction","the transfer of heat or electrical energy from one object to another",43],
+["conventional symbol","a symbol that is recognised all over the world",131],
+["converge","to meet or come together",152],
+["convex","a bulging shape",152],
+["crystal","the particular shaped structure of a mineral",66],
+["crystalline","the adjective for crystal",66],
+["defence","protection against something",26],
+["deposit","to put down or drop",71],
+["diaphragm","a muscle in the chest that helps us to breathe in and out",14],
+["displaced","the moving aside of water as a result of upthrust",125],
+["Earth day","a time period of 24 hours",158],
+["Earth hour","a time period of 60 minutes",158],
+["Earth year","a time period of 365¼ days",158],
+["electrical conductors","materials and substances that conduct electricity well",45],
+["environment","the air, water, land and living things around us",104],
+["erode","to wear down weathered rocks into sediments",71],
+["evidence","the things we know that show us that something has happened or changed",58],
+["extrusive igneous rock","an igneous rock that has formed from lava cooling down on the surface of the Earth",65],
+["fertilisation","the joining of a male sex cell and a female sex cell",21],
+["focal point","the point where rays of light converge",152],
+["food chain","a drawing that shows the order in which animals eat plants and other animals to get energy",99],
+["food web","a drawing of a number of linked food chains",100],
+["forcemeter","a device to weigh objects in newtons (N)",114],
+["fossils","the preserved remains of animals and plants in sedimentary rocks",74],
+["geologist","a scientist who studies rocks",64],
+["gneiss","metamorphic rock made from granite. This word is pronounced the same as ‘nice’",81],
+["heart","the special muscle that pumps blood around the body",3],
+["hormones","chemicals in the body that cause the body changes that happen during puberty",20],
+["host","the living thing that a parasite infects",25],
+["hygiene","keeping yourself and the things around you clean",27],
+["igneous rock","a rock which comes from magma that has cooled down into solid rock",64],
+["incident ray","the ray of light that arrives at the mirror",144],
+["intrusive igneous rock","an igneous rock that has formed when magma cools down inside the Earth’s crust",65],
+["irreversible","cannot be changed back to the way it was before",50],
+["lens","a transparent material such as glass, Perspex or plastic with at least one curved surface",151],
+["loam","a soil with a balance of sand, clay and organic matter",89],
+["lungs","the organs we use for breathing",13],
+["mass","the amount of matter in an object, measured in kilograms (kg)",113],
+["medium","a material such as air, water or glass",150],
+["melting point","the temperature at which a solid becomes a liquid",36],
+["menstruation","a period of bleeding caused by the release of the womb lining and an unfertilised egg, once a month",21],
+["metamorphic rock","a rock that has been changed by heat or pressure or both",79],
+["microplastics","very small particles of plastic that make their way into the environment, especially rivers and seas",104],
+["mineral","part of a rock made of different substances with a crystalline structure",66],
+["mirror image","reflection in a mirror",143],
+["mould","an impression of exactly the same shape and size as the animal or plant",75],
+["mucus","a sticky substance found in our noses, windpipe and other air passages",26],
+["naked eye","when we can see something with our eyes without the help of a magnifying glass or hand lens",66],
+["newton","the unit of measure for weight, named after Isaac Newton",113],
+["normal","a line drawn at right angles (90°) to the surface of the mirror",144],
+["nutrients","substances that living things need to grow and be healthy",90],
+["optical illusion","something our eyes see, but it is not real",150],
+["organic matter","substances in the soil formed from things which were alive, such as dead leaves, bits of root and twigs",88],
+["ova","female sex cells",21],
+["oxygen","a gas in the air that the body uses",3],
+["parallel circuit","a circuit where there is more than one pathway and each pathway receives the full circuit voltage",135],
+["parasite","any living thing that lives on or in the body of another living thing where it causes harm",25],
+["periscope","a device that uses mirrors for you to see things that are otherwise out of sight",146],
+["pesticide","a substance used for killing insects or other organisms that harm crop plants or animals",92],
+["phase of the Moon","the changing shapes of the Moon in its monthly cycle",160],
+["physical change","any change that does not change a substance into a different substance",50],
+["plane mirror","a flat mirror, rather than a mirror with a curved surface",143],
+["preserved","kept for a very long time",74],
+["pressure","the force that is exerted on or against an object by something in contact with it",7],
+["products","the new substances that form in chemical reactions",57],
+["property","something about a substance that allows us to tell it apart from other substances",36],
+["puberty","the age at which a person becomes able to reproduce",20],
+["pulse","a small beat felt under the skin due to the pressure of blood as the heart pumps it around the body",7],
+["rate","how fast something happens",53],
+["react","to interact and change to make a new substance; also to respond to something",57],
+["reactants","the substances that react together in a chemical reaction",57],
+["reflected ray","the ray of light that reflects off the mirror",144],
+["refraction","the bending of light",150],
+["rehabilitation","to restore your body to health",117],
+["repellent","a substance that keeps insects or other things away",29],
+["represent","to show or stand for",99],
+["reproductive system","the parts of the body that make the sex cells and allow living things to have young",21],
+["reversible","can be changed back to the way it was before",50],
+["sediment","very small pieces of rock",71],
+["sedimentary rock","a rock made from small pieces of other rock stuck together",71],
+["sedimentation","the process where sediments build up in layers on the sea bed or on a lake bed",71],
+["series circuit","a circuit where the electric current only has one pathway",134],
+["soil","a mixture of broken up rocks, organic matter, water and air",88],
+["solidification","the process where liquid magma or lava cools down and becomes solid rock",65],
+["solute","the substance in a solution that is dissolved, e.g. salt",51],
+["solvent","the substance in a solution in which the solute dissolves, e.g. water",51],
+["sperm","male sex cells",21],
+["symbol","a small sign used on a diagram to represent a real thing",131],
+["texture","the feel of a material; for example, rough or smooth",88],
+["thermal conductors","materials and substances that conduct heat well",43],
+["toxic","harmful or poisonous solids, liquids or gases",104],
+["transport","to carry",71],
+["uniform","the same throughout",52],
+["upthrust","a force that pushes up on an object in water or air",125],
+["valley","the landform that a river erodes in the rocks",71],
+["vectors","living things that spread diseases but do not get the diseases themselves",29],
+["volt (V)","the unit for measuring the strength of electricity",133],
+["voltage","the strength of electricity needed for an electrical component or appliance to work",133],
+["waning Moon","the decreasing in size of the lit-up part of the Moon in its monthly cycle",162],
+["waterlogged","full of water that will not drain through",90],
+["waxing Moon","the increasing in size of the lit-up part of the Moon in its monthly cycle",162],
+["weathering","a process where heat, ice, rain or plant roots break up rocks",71],
+["weight","the force of attraction on an object caused by gravity, measured in newtons (N)",113],
+["weightlessness","a state of having no weight because there is no gravity",116],
+["windpipe","the air tube that carries air from the nose and mouth to the lungs and back again",14]
+];
+
+/* ---------------- elements ---------------- */
+const $ = id => document.getElementById(id);
+const screens = {start:$("s-start"), play:$("s-play"), end:$("s-end")};
+function show(name){ for(const k in screens) screens[k].classList.toggle("on", k===name); window.scrollTo(0,0); }
+
+/* ---------------- settings ---------------- */
+const CHOICE_OPTS = [6,8,10,12,14,16];
+const LENGTH_OPTS = [5,10,20,30];
+let choices = 6, total = 10, mode = "pick";
+
+function buildOpts(el, values, current, label, onPick){
+  el.innerHTML = "";
+  values.forEach(v=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = v;
+    b.setAttribute("aria-label", v + " " + label);
+    b.setAttribute("aria-pressed", v===current ? "true" : "false");
+    b.onclick = ()=>{
+      [...el.children].forEach(c=>c.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+      onPick(v); unlockAudio(); blip();
+    };
+    el.appendChild(b);
+  });
+}
+buildOpts($("opt-choices"), CHOICE_OPTS, choices, "words", v=>choices=v);
+buildOpts($("opt-length"), LENGTH_OPTS, total, "questions", v=>total=v);
+
+[["pick","Tap the word"],["type","Type the word"]].forEach(([val,label])=>{
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = label;
+  b.style.flex = "1 1 40%";
+  b.setAttribute("aria-pressed", val===mode ? "true":"false");
+  b.onclick = ()=>{
+    mode = val;
+    [...$("opt-mode").children].forEach(c=>c.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true");
+    $("set-choices").hidden = (mode === "type");
+    unlockAudio(); blip();
+  };
+  $("opt-mode").appendChild(b);
+});
+
+/* ---------------- sound ---------------- */
+let ac = null, soundOn = true;
+function unlockAudio(){
+  if(!ac){ try{ ac = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ac=null; } }
+  if(ac && ac.state === "suspended") ac.resume();
+}
+function tone(freq, start, dur, type, vol){
+  if(!soundOn || !ac) return;
+  const t0 = ac.currentTime + start;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || "triangle";
+  o.frequency.setValueAtTime(freq, t0);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(vol==null?0.22:vol, t0+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  o.connect(g).connect(ac.destination);
+  o.start(t0); o.stop(t0+dur+0.05);
+}
+function blip(){ tone(880,0,0.08,"triangle",0.10); }
+function soundRight(){ [523.25,659.25,783.99].forEach((f,i)=>tone(f, i*0.085, 0.28,"triangle",0.20)); }
+function soundWrong(){
+  if(!soundOn || !ac) return;
+  const t0 = ac.currentTime;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = "sawtooth";
+  o.frequency.setValueAtTime(300,t0);
+  o.frequency.exponentialRampToValueAtTime(120,t0+0.34);
+  g.gain.setValueAtTime(0.16,t0);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+0.38);
+  o.connect(g).connect(ac.destination);
+  o.start(t0); o.stop(t0+0.42);
+}
+function soundFinish(){ [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,i*0.13,0.42,"triangle",0.2)); }
+
+$("btn-sound").onclick = e=>{
+  soundOn = !soundOn;
+  e.currentTarget.setAttribute("aria-pressed", soundOn?"true":"false");
+  e.currentTarget.textContent = soundOn ? "🔔" : "🔇";
+  unlockAudio(); if(soundOn) blip();
+};
+
+/* ---------------- game ---------------- */
+let deck=[], idx=0, correct=0, streak=0, bestStreak=0, misses=[], t0=0, ticker=null, locked=false, elapsed=0;
+
+const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const mmss = ms => { const s=Math.floor(ms/1000); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+
+function startGame(){
+  unlockAudio();
+  const pool = shuffle(WORDS.slice());
+  deck = pool.slice(0, Math.min(total, pool.length)).map(item=>{
+    if(mode === "type") return { item, options: [] };
+    const others = shuffle(WORDS.filter(w=>w[0]!==item[0])).slice(0, choices-1);
+    return { item, options: shuffle(others.concat([item])) };
+  });
+  idx=0; correct=0; streak=0; bestStreak=0; misses=[]; locked=false;
+  $("tally").textContent = "0";
+  buildTrack();
+  t0 = Date.now();
+  clearInterval(ticker);
+  ticker = setInterval(()=>{ $("clock").textContent = mmss(Date.now()-t0); }, 200);
+  $("clock").textContent = "0:00";
+  show("play");
+  render();
+}
+
+function buildTrack(){
+  const t = $("track"); t.innerHTML="";
+  deck.forEach(()=> t.appendChild(document.createElement("i")));
+  if(t.firstChild) t.firstChild.className = "now";
+}
+
+function render(){
+  const q = deck[idx];
+  $("qno").textContent = (idx+1) + " of " + deck.length;
+  $("defn").textContent = q.item[1];
+  $("verdict").textContent = "";
+  locked = false;
+
+  if(mode === "type"){
+    $("answers").hidden = true;
+    $("answers").innerHTML = "";
+    $("typing").hidden = false;
+    const target = plain(q.item[0]);
+    const parts = target.split(/\s+/);
+    const letters = parts.join("").length;
+    $("pattern").innerHTML = parts.map(w=>"•".repeat(w.length)).join("&nbsp;&nbsp;&nbsp;") +
+      "<small>" + letters + " letters" + (parts.length>1 ? " · " + parts.length + " words" : "") + "</small>";
+    const inp = $("typed");
+    inp.value = ""; inp.disabled = false;
+    inp.classList.remove("right","wrong","shake");
+    $("btn-check").disabled = false;
+    $("btn-hint").disabled = false;
+    $("btn-skip").disabled = false;
+    inp.focus();
+    return;
+  }
+
+  $("typing").hidden = true;
+  $("answers").hidden = false;
+  const box = $("answers");
+  box.className = "answers two-up" + (choices>=10 ? " dense" : "");
+  box.innerHTML = "";
+  q.options.forEach((opt,i)=>{
+    const b = document.createElement("button");
+    b.className = "tile";
+    b.innerHTML = '<span class="mark">'+String.fromCharCode(65+i)+'</span><span></span>';
+    b.lastChild.textContent = opt[0];
+    b.onclick = ()=> answer(b, opt, q);
+    box.appendChild(b);
+  });
+}
+
+/* --- typing mode --- */
+const plain = w => w.replace(/\s*\(.*?\)\s*/g," ").trim();
+const norm  = s => s.toLowerCase().replace(/[^a-z]+/g," ").trim();
+
+function lev(a,b){
+  const m=a.length, n=b.length;
+  if(!m) return n; if(!n) return m;
+  let prev=[...Array(n+1).keys()], cur=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++){
+      cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (a[i-1]===b[j-1]?0:1));
+    }
+    prev = cur.slice();
+  }
+  return prev[n];
+}
+
+function lockTyping(){
+  locked = true;
+  $("typed").disabled = true;
+  $("btn-check").disabled = true;
+  $("btn-hint").disabled = true;
+  $("btn-skip").disabled = true;
+}
+
+function checkTyped(){
+  if(locked || mode !== "type") return;
+  const q = deck[idx];
+  const target = plain(q.item[0]);
+  const typed = $("typed").value;
+  if(!norm(typed)){ $("typed").focus(); return; }
+  lockTyping();
+  const d = lev(norm(typed), norm(target));
+  const right = d === 0 || (d === 1 && norm(target).length >= 6);
+  const page = '<span class="page">book page '+q.item[2]+'</span>';
+
+  if(right){
+    correct++; streak++; bestStreak = Math.max(bestStreak, streak);
+    $("tally").textContent = correct;
+    $("typed").classList.add("right");
+    $("typed").value = target;
+    $("verdict").innerHTML = (d===0 ? "Yes — <b>"+target+"</b>" : "Almost — it is spelled <b>"+target+"</b>") + page;
+    soundRight(); mark(idx,"done");
+  } else {
+    streak = 0;
+    misses.push({defn:q.item[1], right:target, picked:typed.trim(), page:q.item[2]});
+    $("typed").classList.add("wrong","shake");
+    $("verdict").innerHTML = "The word is <b>"+target+"</b>" + page;
+    soundWrong(); mark(idx,"miss");
+  }
+  setTimeout(next, right ? 1100 : 2200);
+}
+
+function giveUp(){
+  if(locked || mode !== "type") return;
+  const q = deck[idx];
+  const target = plain(q.item[0]);
+  lockTyping();
+  streak = 0;
+  misses.push({defn:q.item[1], right:target, picked:"left blank", page:q.item[2]});
+  $("typed").value = target;
+  $("typed").classList.add("wrong");
+  $("verdict").innerHTML = 'The word is <b>'+target+'</b><span class="page">book page '+q.item[2]+'</span>';
+  soundWrong(); mark(idx,"miss");
+  setTimeout(next, 2200);
+}
+
+function next(){
+  idx++;
+  if(idx >= deck.length) finish();
+  else { mark(idx,"now"); render(); }
+}
+
+function answer(btn, opt, q){
+  if(locked) return;
+  locked = true;
+  const right = opt[0] === q.item[0];
+  const tiles = [...$("answers").children];
+  tiles.forEach(t=>{ t.disabled = true; });
+
+  if(right){
+    correct++; streak++; bestStreak = Math.max(bestStreak, streak);
+    btn.classList.add("right");
+    btn.querySelector(".mark").textContent = "✓";
+    tiles.forEach(t=>{ if(t!==btn) t.classList.add("faded"); });
+    $("verdict").innerHTML = 'Yes — <b>'+q.item[0]+'</b><span class="page">book page '+q.item[2]+'</span>';
+    $("tally").textContent = correct;
+    soundRight();
+    mark(idx,"done");
+  } else {
+    streak = 0;
+    misses.push({defn:q.item[1], right:q.item[0], picked:opt[0], page:q.item[2]});
+    btn.classList.add("wrong","shake");
+    btn.querySelector(".mark").textContent = "✕";
+    tiles.forEach(t=>{
+      if(t.lastChild.textContent === q.item[0]){ t.classList.add("right"); t.querySelector(".mark").textContent="✓"; }
+      else if(t!==btn) t.classList.add("faded");
+    });
+    $("verdict").innerHTML = 'The word is <b>'+q.item[0]+'</b><span class="page">book page '+q.item[2]+'</span>';
+    soundWrong();
+    mark(idx,"miss");
+  }
+
+  setTimeout(next, right ? 950 : 1900);
+}
+
+function mark(i, cls){
+  const dot = $("track").children[i];
+  if(dot) dot.className = cls;
+}
+
+function finish(){
+  clearInterval(ticker);
+  elapsed = Date.now() - t0;
+  const pct = Math.round(correct/deck.length*100);
+  $("end-score").firstChild.textContent = correct;
+  $("end-of").textContent = "/" + deck.length;
+  $("end-time").textContent = mmss(elapsed);
+  $("end-pct").textContent = pct + "%";
+  $("end-streak").textContent = bestStreak;
+  $("end-grade").textContent =
+    pct===100 ? "Every single one. Lab legend." :
+    pct>=80  ? "Strong run — nearly all right." :
+    pct>=50  ? "Good going. A few to revisit." :
+               "Tricky set. Try the same words again.";
+
+  const rb = $("review-block"), rl = $("review");
+  rl.innerHTML = "";
+  if(misses.length){
+    rb.hidden = false;
+    misses.forEach(m=>{
+      const li = document.createElement("li");
+      const d = document.createElement("p"); d.className="d"; d.textContent = m.defn;
+      const a = document.createElement("p"); a.className="a";
+      a.innerHTML = '<s></s><b></b> <span style="font-weight:400;font-size:.85rem;color:#5B7C80">page '+m.page+'</span>';
+      a.querySelector("s").textContent = m.picked;
+      a.querySelector("b").textContent = m.right;
+      li.append(d,a); rl.appendChild(li);
+    });
+  } else rb.hidden = true;
+
+  $("btn-save").disabled = false;
+  $("btn-save").textContent = "Save";
+  soundFinish();
+  show("end");
+  drawBoard();
+}
+
+/* ---------------- high scores ---------------- */
+const KEY = "wordlab:scores";
+let scores = null, justSaved = null;
+
+async function loadScores(){
+  if(scores) return scores;
+  try{
+    const r = await window.storage.get(KEY);
+    scores = r && r.value ? JSON.parse(r.value) : [];
+  }catch(e){ scores = []; }
+  return scores;
+}
+function rank(a,b){
+  const pa = a.correct/a.total, pb = b.correct/b.total;
+  if(pb !== pa) return pb - pa;
+  if(b.correct !== a.correct) return b.correct - a.correct;
+  return a.ms - b.ms;
+}
+async function drawBoard(){
+  const list = await loadScores();
+  const board = $("board"), empty = $("board-empty");
+  board.innerHTML = "";
+  if(!list.length){
+    empty.textContent = "No scores yet. Save this run to start the board.";
+    empty.hidden = false; return;
+  }
+  empty.hidden = true;
+  list.slice().sort(rank).slice(0,8).forEach((s,i)=>{
+    const li = document.createElement("li");
+    if(justSaved && s.id === justSaved) li.className = "you";
+    li.innerHTML = '<span class="rank">'+(i+1)+'</span>'+
+      '<span class="who"></span>'+
+      '<span class="pts">'+s.correct+'/'+s.total+' · '+mmss(s.ms)+'</span>';
+    const who = li.querySelector(".who");
+    who.textContent = s.name;
+    const em = document.createElement("em");
+    em.textContent = s.mode === "type" ? "typed the words" : (s.choices || 6) + " words to pick from";
+    who.appendChild(em);
+    board.appendChild(li);
+  });
+}
+
+$("btn-save").onclick = async e=>{
+  const btn = e.currentTarget;
+  const name = ($("end-name").value || "Player").trim().slice(0,14) || "Player";
+  const entry = { id: Date.now()+"-"+Math.random().toString(36).slice(2,7), name, correct, total: deck.length, ms: elapsed, choices, mode, when: Date.now() };
+  const list = await loadScores();
+  list.push(entry);
+  list.sort(rank);
+  scores = list.slice(0,50);
+  btn.disabled = true; btn.textContent = "Saving…";
+  try{
+    await window.storage.set(KEY, JSON.stringify(scores));
+    justSaved = entry.id;
+    btn.textContent = "Saved";
+  }catch(err){
+    btn.textContent = "Not saved — tap to retry";
+    btn.disabled = false;
+  }
+  drawBoard();
+};
+
+/* ---------------- wiring ---------------- */
+$("btn-start").onclick = startGame;
+$("btn-again").onclick = ()=>{ justSaved=null; startGame(); };
+$("btn-home").onclick = ()=>{ justSaved=null; show("start"); };
+$("btn-quit").onclick = ()=>{ clearInterval(ticker); show("start"); };
+$("btn-check").onclick = checkTyped;
+$("btn-skip").onclick = giveUp;
+$("btn-hint").onclick = ()=>{
+  if(locked || mode !== "type") return;
+  const parts = plain(deck[idx].item[0]).split(/\s+/);
+  $("verdict").innerHTML = "Starts with <b>" + parts.map(w=>w[0]).join(" ") + "</b>";
+  $("btn-hint").disabled = true;
+  blip();
+};
+$("typed").addEventListener("keydown", e=>{ if(e.key === "Enter") checkTyped(); });
+
+document.addEventListener("keydown", e=>{
+  if(!screens.play.classList.contains("on") || locked) return;
+  if(mode === "type") return;
+  const i = "abcdefghijklmnop".indexOf(e.key.toLowerCase());
+  const tiles = $("answers").children;
+  if(i >= 0 && tiles[i]) tiles[i].click();
+});
+</script>
+</body>
+</html>
