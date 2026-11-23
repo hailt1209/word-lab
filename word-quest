@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Quest – Class 5CI English Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fff8ec; --ink:#2b2350; --muted:#6f6890; --card:#ffffff;
+    --line:#ece3d3; --brand:#6c4cf5; --brand-2:#8f75ff;
+    --good:#1fae6b; --good-bg:#e4f8ee; --bad:#e5484d; --bad-bg:#fdeaea;
+    --sel:#ffb020; --sel-bg:#fff4dc;
+    --c-fest:#ff7a45; --c-brain:#e0569b; --c-opinion:#2f9be0; --c-poem:#9b5de5; --c-story:#22a06b;
+    --radius:18px; --shadow:0 3px 0 rgba(43,35,80,.10), 0 8px 24px rgba(43,35,80,.07);
+    --pixel:"Press Start 2P",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"Baloo 2",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;
+    background-image:radial-gradient(circle at 10% 0%,#ffe7c2 0,transparent 35%),radial-gradient(circle at 100% 20%,#e7e0ff 0,transparent 30%);}
+  button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+  .wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px}
+  .logo span.badge{font-size:26px}
+  .home{font-weight:700;font-size:15px;padding:8px 14px;border-radius:999px;background:var(--card);box-shadow:var(--shadow)}
+  .home[hidden]{display:none}
+  h1{font-size:30px;line-height:1.15;margin:4px 0 4px;font-weight:800}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:17px}
+  .levels{display:grid;gap:12px}
+  .level{display:flex;align-items:center;gap:16px;text-align:left;width:100%;padding:14px 18px;border-radius:var(--radius);
+    background:var(--card);box-shadow:var(--shadow);border:2px solid transparent;transition:transform .12s,border-color .12s}
+  .level:hover{transform:translateY(-2px);border-color:var(--brand-2)}
+  .level .num{flex:none;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:30px;background:var(--nb)}
+  .level .t{font-weight:800;font-size:20px;line-height:1.2}
+  .level .d{color:var(--muted);font-size:15px;line-height:1.3}
+  .level .stars{margin-left:auto;font-size:18px;white-space:nowrap;letter-spacing:1px}
+  .level.boss{background:linear-gradient(120deg,#2a1b5e,#47208a);color:#fff}
+  .level.boss .d{color:#d6ccff}
+  .study-btn{margin-top:16px;width:100%;padding:12px;border-radius:var(--radius);border:2px dashed #cfc3ee;font-weight:700;font-size:17px;color:var(--brand)}
+  .study-btn:hover{background:#f3efff}
+
+  .bar{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+  .progress{flex:1;height:12px;background:#eee6d6;border-radius:999px;overflow:hidden}
+  .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand-2));border-radius:999px;transition:width .3s}
+  .pill{font-weight:700;font-size:15px;background:var(--card);padding:4px 12px;border-radius:999px;box-shadow:var(--shadow);white-space:nowrap}
+  .prompt{font-size:18px;color:var(--muted);margin:0 0 12px;font-weight:600}
+
+  /* Level 1 */
+  .match{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .col{display:grid;gap:10px;align-content:start}
+  .tile{min-height:68px;padding:8px 10px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);border:3px solid transparent;
+    display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .1s,border-color .1s,background .1s}
+  .tile.pic{font-size:38px;line-height:1}
+  .tile.word{font-size:19px;font-weight:700;line-height:1.15}
+  .tile:hover:not(.done){transform:translateY(-1px)}
+  .tile.sel{border-color:var(--sel);background:var(--sel-bg)}
+  .tile.done{background:var(--good-bg);border-color:var(--good);opacity:.65;cursor:default}
+  .tile.wrong{border-color:var(--bad);background:var(--bad-bg)}
+
+  /* Level 2 & 4 */
+  .card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:26px 18px;text-align:center;margin-bottom:16px;position:relative}
+  .card .big{font-size:30px;font-weight:800;line-height:1.2;padding:0 30px}
+  .say{position:absolute;top:10px;right:10px;font-size:22px;width:42px;height:42px;border-radius:50%;background:#f3efff}
+  .say:hover{background:#e7e0ff}
+  .cats{display:grid;gap:10px}
+  .cat{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);
+    text-align:left;font-weight:700;font-size:17px;line-height:1.25;border:3px solid transparent;border-left:8px solid var(--cc,#cfc3ee)}
+  .cat .ic{font-size:26px;flex:none}
+  .cat .ic.letter{width:32px;height:32px;border-radius:10px;background:#f3efff;color:var(--brand);font-size:18px;display:grid;place-items:center}
+  .cat small{display:block;font-weight:600;color:var(--muted);font-size:13px}
+  .cat:hover:not(:disabled){transform:translateY(-1px)}
+  .cat.right{background:var(--good-bg);border-color:var(--good);border-left-color:var(--good)}
+  .cat.wrong{background:var(--bad-bg);border-color:var(--bad);border-left-color:var(--bad)}
+  .cat:disabled{cursor:default}
+
+  /* Level 3 */
+  .picbig{font-size:84px;line-height:1.1}
+  .hintcat{display:inline-block;margin-top:6px;font-size:14px;font-weight:700;color:var(--muted);background:#f6f1e6;border-radius:999px;padding:2px 12px}
+  .slots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 4px;margin:16px 0 4px}
+  .slot{width:26px;height:36px;border-bottom:3px solid #cfc6e6;font-size:24px;font-weight:800;display:grid;place-items:end center;padding-bottom:2px;text-transform:lowercase}
+  .slot.gap{border:none;width:14px}
+  .slot.shown{color:var(--brand);border-color:var(--brand)}
+  .typebox{display:flex;gap:10px;margin-bottom:12px}
+  .typebox input{flex:1;min-width:0;font:inherit;font-size:22px;font-weight:700;padding:10px 16px;border-radius:14px;border:3px solid var(--line);background:#fff;color:var(--ink);outline:none}
+  .typebox input:focus{border-color:var(--brand-2)}
+  .typebox input.wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .typebox input.right{border-color:var(--good);background:var(--good-bg)}
+  .btn{padding:10px 18px;border-radius:14px;font-weight:800;font-size:17px;background:var(--brand);color:#fff;box-shadow:0 3px 0 #4b2fd0}
+  .btn:hover{filter:brightness(1.07)}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #4b2fd0}
+  .btn.ghost{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .feedback{min-height:28px;text-align:center;font-weight:700;font-size:18px;margin:10px 0 0}
+  .feedback.good{color:var(--good)}.feedback.bad{color:var(--bad)}
+
+  /* Result */
+  .result{text-align:center;padding:10px 0}
+  .result .bigstars{font-size:54px;letter-spacing:6px;margin:6px 0}
+  .result .score{font-size:22px;font-weight:700;color:var(--muted)}
+  .review{text-align:left;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 18px;margin:18px 0}
+  .review h3{margin:0 0 8px;font-size:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#f6f1e6;border-radius:999px;padding:4px 12px;font-weight:700;font-size:16px}
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  /* Study */
+  .group{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:14px;border-top:6px solid var(--cc)}
+  .group h3{margin:0 0 2px;font-size:19px}
+  .group .u{color:var(--muted);font-size:14px;font-weight:600;margin-bottom:8px}
+  .words{display:grid;gap:6px}
+  .w{display:flex;align-items:baseline;gap:8px;background:#faf6ee;border-radius:12px;padding:6px 10px;text-align:left;font-size:15px;color:var(--muted)}
+  .w:hover{background:#f0eaff}
+  .w b{color:var(--ink);font-size:16px;white-space:nowrap}
+  .w .e{font-size:18px}
+
+  /* Level 5 – boss battle */
+  .intro{background:linear-gradient(160deg,#1d1446,#3b1f7a);color:#fff;border-radius:22px;padding:22px;text-align:center}
+  .intro h1{font-family:var(--pixel);font-size:20px;line-height:1.5;margin:6px 0 12px}
+  .intro .hero-row{font-size:56px;margin:4px 0 10px}
+  .intro ul{text-align:left;max-width:480px;margin:0 auto 14px;padding-left:20px;font-size:16px;line-height:1.5;color:#e6e0ff}
+  .intro select{font:inherit;font-weight:700;padding:4px 8px;border-radius:10px;border:none}
+  .intro .btn{font-family:var(--pixel);font-size:14px;padding:14px 22px;background:#ffcc33;color:#2b2350;box-shadow:0 4px 0 #c79400}
+  .hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-family:var(--pixel);font-size:11px}
+  .hud .hearts{font-family:inherit;font-size:16px;letter-spacing:1px}
+  .hud button{font-family:var(--pixel);font-size:11px;padding:8px 10px;background:var(--card);border-radius:10px;box-shadow:var(--shadow)}
+  .arena{position:relative;height:clamp(440px,68vh,620px);border-radius:20px;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;
+    background:linear-gradient(#120b33 0%,#2b1866 55%,#4a2a8a 100%);box-shadow:inset 0 0 0 4px #0b0622,var(--shadow)}
+  .arena::before{content:"";position:absolute;inset:0;background-image:radial-gradient(2px 2px at 12% 18%,#fff8 50%,transparent 51%),radial-gradient(2px 2px at 70% 10%,#fff8 50%,transparent 51%),radial-gradient(1.5px 1.5px at 40% 30%,#fff6 50%,transparent 51%),radial-gradient(2px 2px at 88% 36%,#fff7 50%,transparent 51%),radial-gradient(1.5px 1.5px at 22% 45%,#fff5 50%,transparent 51%);pointer-events:none}
+  .boss{position:absolute;top:8px;left:50%;transform:translateX(-50%);text-align:center;width:70%}
+  .boss .face{font-size:64px;line-height:1;display:inline-block;filter:drop-shadow(0 4px 0 #0006)}
+  .boss .face.hit{animation:hit .35s}
+  @keyframes hit{0%,100%{transform:translateX(0);filter:none}30%{transform:translateX(-8px);filter:brightness(2) saturate(3) hue-rotate(-30deg)}60%{transform:translateX(8px)}}
+  .boss .face.dead{animation:die 1s forwards}
+  @keyframes die{to{transform:scale(1.6) rotate(25deg);opacity:0}}
+  .hpbar{height:12px;background:#0007;border:2px solid #fff;border-radius:4px;overflow:hidden;margin-top:4px}
+  .hpbar i{display:block;height:100%;background:linear-gradient(90deg,#ff3d5a,#ff9a3d);transition:width .3s}
+  .bossname{font-family:var(--pixel);font-size:10px;color:#ffd6e0;margin-top:5px}
+  .fword{position:absolute;top:0;left:0;max-width:46%;background:#fffdf5;color:var(--ink);border-radius:12px;padding:6px 10px;text-align:center;
+    font-weight:800;font-size:17px;line-height:1.15;box-shadow:0 4px 0 #0005, 0 0 0 3px #ffcc33;will-change:transform}
+  .fword .e{display:block;font-size:22px}
+  .fword[hidden]{display:none}
+  .heroman{position:absolute;left:0;font-size:46px;line-height:1;will-change:transform;filter:drop-shadow(0 3px 0 #0006)}
+  .heroman.hurt{animation:hurt .5s}
+  @keyframes hurt{25%{filter:brightness(2) sepia(1) saturate(5) hue-rotate(-40deg)}50%{transform:translateY(-6px)}}
+  .heroman.dead{opacity:.5;filter:grayscale(1)}
+  .buckets{position:absolute;left:0;right:0;bottom:0;height:82px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:0 4px 4px}
+  .bucket{border-radius:6px 6px 16px 16px;background:var(--cc);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:800;font-size:13px;line-height:1.1;box-shadow:inset 0 -6px 0 #0003,inset 0 3px 0 #fff4;border:3px solid #0b0622;text-align:center;padding:2px}
+  .bucket .bi{font-size:24px}
+  .bucket.good{animation:bgood .5s}
+  .bucket.bad{animation:bbad .6s}
+  .bucket.hint{outline:4px dashed #fff;outline-offset:-6px}
+  @keyframes bgood{50%{transform:scale(1.08);filter:brightness(1.4)}}
+  @keyframes bbad{20%,60%{transform:translateX(-5px);background:#e5484d}40%,80%{transform:translateX(5px);background:#e5484d}}
+  .toast{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);background:#000c;color:#fff;font-weight:700;font-size:16px;padding:8px 14px;border-radius:12px;text-align:center;max-width:85%;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .bolt{position:absolute;font-size:30px;pointer-events:none}
+  .pauseveil{position:absolute;inset:0;background:#0009;display:none;place-items:center;font-family:var(--pixel);color:#fff;font-size:16px;text-align:center;line-height:2}
+  .pauseveil.on{display:grid}
+  .pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+  .pad button{font-size:26px;padding:12px 0;border-radius:16px;background:var(--card);box-shadow:0 4px 0 #cfc3ee}
+  .pad button:active{transform:translateY(3px);box-shadow:0 1px 0 #cfc3ee}
+  .keys-hint{text-align:center;color:var(--muted);font-size:14px;margin-top:8px}
+
+  /* Level 6 – Word Runner */
+  .phud{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:10px 12px;margin-bottom:10px}
+  .pstats{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+  .pstats .hearts{font-size:16px;letter-spacing:1px;margin-right:auto}
+  .pstats button{font-size:16px;width:36px;height:32px;border-radius:10px;background:#f3efff}
+  .desc{position:relative;text-align:center;padding:6px 44px}
+  .desc small{display:block;color:var(--muted);font-weight:700;font-size:13px}
+  .desc div{font-size:20px;font-weight:800;line-height:1.25}
+  .desc .say{top:4px;right:0}
+  .tbar{height:8px;background:#eee6d6;border-radius:999px;overflow:hidden;margin-top:6px}
+  .tbar i{display:block;height:100%;width:100%;background:var(--good)}
+  .tbar i.low{background:var(--bad)}
+  .stage{position:relative;border-radius:16px;overflow:hidden;box-shadow:inset 0 0 0 4px #0b0622,var(--shadow);background:#5ec8ff}
+  .stage canvas{display:block;width:100%;aspect-ratio:16/9}
+  .pad.run{grid-template-columns:1fr 1fr 1.4fr}
+  .pad button{touch-action:none;user-select:none;-webkit-user-select:none}
+  .pad .jumpbtn{font-family:var(--pixel);font-size:14px;background:#ffcc33;box-shadow:0 4px 0 #c79400}
+  .shake{animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .pop{animation:pop .3s}
+  @keyframes pop{50%{transform:scale(1.04)}}
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
+  .confetti b{position:absolute;top:-30px;font-size:26px;animation:fall 1.8s ease-in forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.8}}
+  @media (max-width:480px){
+    h1{font-size:26px}.tile.pic{font-size:32px}.tile.word{font-size:16px}.tile{min-height:60px}
+    .picbig{font-size:70px}.slot{width:22px;font-size:21px}
+    .bucket{font-size:11px}.bucket .bi{font-size:20px}.fword{font-size:15px;max-width:60%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><span class="badge">🦉</span> Word Quest</div>
+    <button class="home" id="homeBtn" hidden>🏠 Menu</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+/* ===== Settings you can change ===== */
+const BOSS = {
+  MISS_RATE: 0.10,       // Level 5: you lose when misses reach this share of all words (0.10 = 10%)
+  FALL_MS_START: 9000,   // time for a word to fall at the start (ms)
+  FALL_MS_END: 4500      // time for a word to fall when the boss is almost dead (ms)
+};
+
+const RUNNER = {
+  TIME_PER_WORD: 40,     // Level 6: seconds to find each word
+  LIVES: 5               // Level 6: hearts at the start
+};
+const UNLOCK = {
+  MAX_MISTAKE_RATE: 0.20 // Level 5 opens when Levels 1–4 are each finished with at most this share of mistakes (0.20 = 20%)
+};
+
+/* ===== Data: Term 1 review sheet (Global English, class 5CI) ===== */
+const CATS = {
+  fest:    {name:"Celebrations & festivals", short:"Festivals", unit:"Unit 4 · Special occasions", icon:"🎉", color:"var(--c-fest)"},
+  brain:   {name:"Facts about our brain",    short:"Brain",     unit:"Unit 5 · Our brains",        icon:"🧠", color:"var(--c-brain)"},
+  opinion: {name:"Phrases to give opinions", short:"Opinions",  unit:"Unit 5 · Our brains",        icon:"💬", color:"var(--c-opinion)"},
+  poem:    {name:"Poem: The girl who thought in pictures", short:"Poem", unit:"Unit 5 · Our brains", icon:"📝", color:"var(--c-poem)"},
+  story:   {name:"Different types of stories", short:"Stories", unit:"Unit 6 · Great stories",     icon:"📚", color:"var(--c-story)"}
+};
+// w = word as printed · c = topic · p = picture (only where a clear one exists) · d = meaning
+// t = what to type in level 3 (default: word without "a") · k = words that mean nearly the same (never used as each other's wrong answers)
+const WORDS = [
+  // Unit 4
+  {w:"fireworks",c:"fest",p:"🎆",d:"Colourful explosions of light in the night sky at a celebration."},
+  {w:"costumes",c:"fest",p:"🧛🦸",d:"Special clothes you wear to dress up as someone or something."},
+  {w:"a feast",c:"fest",p:"🍗🍲🍰",d:"A very big, special meal with lots of food."},
+  {w:"decorations",c:"fest",p:"🎊🎈",d:"Pretty things you put up to make a place look nice for a party."},
+  {w:"lanterns",c:"fest",p:"🏮",d:"Lights inside a paper or glass case that you can hang or carry."},
+  {w:"lights",c:"fest",p:"✨💡",d:"Things that shine and make a place bright."},
+  {w:"a gift",c:"fest",p:"🎁",d:"Something you give to someone; a present."},
+  {w:"paint",c:"fest",p:"🎨🖌️",d:"A coloured liquid you put on things with a brush."},
+  {w:"parades",c:"fest",p:"🥁🎺",d:"Lines of people marching, dancing or playing music through the streets."},
+  {w:"symbols",c:"fest",p:"☮️☯️❤️",d:"Signs or pictures that stand for an idea."},
+  {w:"candle",c:"fest",p:"🕯️",d:"A stick of wax with a string in the middle that burns to give light."},
+  {w:"kimono",c:"fest",p:"👘",d:"A long traditional Japanese robe with wide sleeves."},
+  {w:"ball dress",c:"fest",p:"👗",d:"A long, beautiful dress for a fancy dance party."},
+  {w:"a blessing",c:"fest",p:"🙏",d:"Good wishes or a prayer asking for good things for someone."},
+  {w:"Chinese lunar calendar",c:"fest",p:"🌕📅",d:"A calendar that follows the moon; it sets the date of Lunar New Year."},
+  {w:"harvest",c:"fest",p:"🌾🧺",d:"The time when farmers collect the crops from their fields."},
+  {w:"boiled",c:"fest",p:"♨️🥚",d:"Cooked in very hot, bubbling water."},
+  {w:"soft",c:"fest",p:"☁️🧸",d:"Not hard; easy to press, like a pillow."},
+  {w:"chewy",c:"fest",p:"🍡",d:"Needs a lot of biting before you can swallow it."},
+  {w:"sweet",c:"fest",p:"🍭",d:"Tasting of sugar, like candy."},
+  {w:"clever",c:"fest",p:"🤓",d:"Quick to learn and understand things; smart."},
+  {w:"moody",c:"fest",p:"😒",d:"Often grumpy, with feelings that change quickly."},
+  {w:"jolly",c:"fest",p:"😄",d:"Happy and cheerful."},
+  {w:"tough",c:"fest",p:"💪",d:"Strong and not easily hurt or broken."},
+  {w:"lazy",c:"fest",p:"🦥",d:"Not wanting to work or do anything."},
+  {w:"anxious",c:"fest",p:"😰",d:"Worried or nervous about something."},
+  {w:"weepy",c:"fest",p:"😢",d:"Crying easily, or about to cry."},
+  {w:"rude",c:"fest",p:"😝",d:"Not polite; saying or doing unkind things."},
+  {w:"miserable",c:"fest",p:"😞",d:"Very, very unhappy."},
+  {w:"stupid",c:"fest",p:"🤪",d:"Not clever; silly (an unkind word to call a person)."},
+  {w:"dry-eyed",c:"fest",d:"Not crying, even when something is sad."},
+  // Unit 5 – brain
+  {w:"wrinkly",c:"brain",p:"👵",d:"Covered in lots of folds and lines."},
+  {w:"organ",c:"brain",p:"🫀",d:"A body part with a special job, like the heart or the brain."},
+  {w:"speech",c:"brain",p:"🗣️",d:"The ability to talk and say words."},
+  {w:"emotions",c:"brain",p:"😊😢😡",d:"Feelings such as happy, sad or angry."},
+  {w:"accurate",c:"brain",p:"🎯",d:"Exactly right, with no mistakes."},
+  {w:"brain stem",c:"brain",d:"The part that joins the brain to the spinal cord and controls breathing and heartbeat."},
+  {w:"cerebrum",c:"brain",d:"The biggest part of the brain, used for thinking, memory and the senses."},
+  {w:"cerebellum",c:"brain",d:"The small part at the back of the brain that helps with balance and movement."},
+  {w:"digestion",c:"brain",d:"How your body breaks down food so it can use it."},
+  {w:"blood circulation",c:"brain",p:"🩸🔄",d:"How blood moves all around your body, pumped by the heart."},
+  {w:"balance",c:"brain",p:"⚖️",d:"Staying steady without falling over."},
+  {w:"movement",c:"brain",p:"🏃",d:"Moving your body from one place or position to another."},
+  {w:"coordination",c:"brain",p:"🤹",d:"Making different body parts work together smoothly."},
+  {w:"nerve cells",c:"brain",p:"🧠⚡",d:"Tiny cells that carry messages between the brain and the body."},
+  {w:"damage",c:"brain",p:"💥",d:"Harm that breaks or hurts something."},
+  {w:"protect",c:"brain",p:"🛡️",d:"To keep something safe from harm."},
+  // Unit 5 – opinions
+  {w:"What's your opinion about ...?",c:"opinion",k:"ask",d:"A question to ask what someone thinks about a topic."},
+  {w:"What's your view on ...?",c:"opinion",k:"ask",d:"Another way to ask someone what they think."},
+  {w:"I definitely agree",c:"opinion",k:"agree",d:"You are sure you think the same as the other person."},
+  {w:"I totally agree",c:"opinion",k:"agree",d:"You agree completely."},
+  {w:"I absolutely agree with you!",c:"opinion",k:"agree",d:"You agree 100% and feel strongly about it."},
+  {w:"I think you're right",c:"opinion",k:"agree",d:"You believe what the other person said is correct."},
+  {w:"I share your view on that",c:"opinion",k:"agree",d:"You have the same opinion as the other person."},
+  {w:"I think I disagree",c:"opinion",k:"disagree",d:"A polite way to say you don't think the same."},
+  {w:"Building on (Ahmed's) point ...",c:"opinion",k:"build",d:"Adding your own idea to what someone else just said."},
+  // Unit 5 – poem
+  {w:"twirl",c:"poem",p:"💃",d:"To spin round and round quickly."},
+  {w:"frilly",c:"poem",p:"🎀",d:"Decorated with lots of wavy folds of cloth."},
+  {w:"itch",c:"poem",p:"🦟😖",d:"A feeling on your skin that makes you want to scratch."},
+  {w:"shriek",c:"poem",p:"😱",d:"A loud, high scream."},
+  {w:"balk",c:"poem",p:"🙅",d:"To stop and refuse to do something."},
+  {w:"tantrum",c:"poem",p:"😡💢",d:"A sudden fit of anger with shouting and crying."},
+  {w:"unique",c:"poem",p:"🦄",d:"The only one of its kind; special and different."},
+  // Unit 6
+  {w:"board books",c:"story",p:"👶📘",d:"Books with thick cardboard pages for babies and toddlers."},
+  {w:"comic adventure stories",c:"story",p:"🦸💥",d:"Exciting stories told with pictures and speech bubbles."},
+  {w:"(bedtime) family stories",c:"story",p:"🛏️👨‍👩‍👧",t:"family stories",d:"Gentle stories about family life, often read before sleep."},
+  {w:"fairy tales",c:"story",p:"🧚🏰",d:"Old stories with magic, fairies, princesses or giants."},
+  {w:"fables",c:"story",p:"🐢🐇",d:"Short stories, often about animals, that teach a lesson."},
+  {w:"picture books",c:"story",p:"🖼️📖",d:"Books where the pictures help to tell the story."},
+  {w:"young novels",c:"story",p:"📚",d:"Long chapter books written for older children."},
+  {w:"investigating",c:"story",p:"🔍",d:"Looking carefully for facts to find out the truth."},
+  {w:"binoculars",c:"story",d:"A tool you look through with both eyes to see things far away."},
+  {w:"detective",c:"story",p:"🕵️",d:"A person whose job is to solve crimes and mysteries."}
+];
+WORDS.forEach((o,i)=>{ o.id=i; if(!o.t) o.t=o.w.replace(/^a\s+/i,""); });
+const PIC_WORDS = WORDS.filter(o=>o.p);
+const CAT_KEYS = Object.keys(CATS);
+
+const LEVELS = [
+  {n:1, icon:"🖼️", bg:"#ffe6d9", title:"Picture Match", desc:`Match each word with its picture. (${PIC_WORDS.length} words)`},
+  {n:2, icon:"🗂️", bg:"#e3f1fc", title:"Sort it Out",   desc:`Put each word in the right topic. (${WORDS.length} words)`},
+  {n:3, icon:"⌨️", bg:"#efe5fc", title:"Spell it!",     desc:`Look at the picture and type the word. (${PIC_WORDS.length} words)`},
+  {n:4, icon:"🤔", bg:"#e2f6ec", title:"What does it mean?", desc:`Pick the right meaning from 4 choices. (${WORDS.length} words)`},
+  {n:5, icon:"🐉", bg:"#ffffff22", title:"Boss Battle", desc:"Sort falling words into buckets to defeat the Word Dragon!", boss:true},
+  {n:6, icon:"🏃", bg:"#dff1ff", title:"Word Runner", desc:"Run and jump to hit the word that matches the meaning!"}
+];
+
+/* ===== Helpers ===== */
+const $app = document.getElementById("app");
+const $home = document.getElementById("homeBtn");
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => s.toLowerCase().replace(/[’‘]/g,"'").replace(/[().!?,'"]/g,"").replace(/-/g," ").replace(/^a\s+/,"").replace(/\s+/g," ").trim();
+function chunks(arr,size){ const n=Math.ceil(arr.length/size), out=[]; let i=0; for(let r=0;r<n;r++){ const len=Math.floor((arr.length-i)/(n-r)); out.push(arr.slice(i,i+len)); i+=len; } return out; }
+
+function say(text){
+  try{
+    if(!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[()]/g,"").replace(/\.\.\./g," "));
+    u.lang="en-GB"; u.rate=0.85; speechSynthesis.speak(u);
+  }catch(e){}
+}
+let actx=null;
+function tone(freqs,type,vol,step=0.11,len=0.16){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{
+      const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime+i*step;
+      o.type=type; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+len);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+len+0.02);
+    });
+  }catch(e){}
+}
+const beep = good => good ? tone([660,880],"triangle",0.18) : tone([220,180],"sawtooth",0.08);
+function confetti(){
+  const box=document.createElement("div"); box.className="confetti";
+  const bits=["🎉","⭐","✨","🎊","🌟"];
+  for(let i=0;i<28;i++){const b=document.createElement("b"); b.textContent=bits[i%bits.length];
+    b.style.left=Math.random()*100+"vw"; b.style.animationDelay=(Math.random()*0.6)+"s"; box.appendChild(b);}
+  document.body.appendChild(box); setTimeout(()=>box.remove(),2600);
+}
+function anim(el,cls){ if(!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+const BEST_KEY="wordquest-5ci-best";
+function loadBest(){ try{ return JSON.parse(localStorage.getItem(BEST_KEY))||{}; }catch(e){ return {}; } }
+function saveBest(level,stars){ try{ const b=loadBest(); if(!b[level]||stars>b[level]){ b[level]=stars; localStorage.setItem(BEST_KEY,JSON.stringify(b)); } }catch(e){} }
+const starStr = n => "⭐".repeat(n)+"☆".repeat(3-n);
+
+let timer=null, stopCurrent=null;
+function later(fn,ms){ clearTimeout(timer); timer=setTimeout(fn,ms); }
+function leave(){ clearTimeout(timer); if(stopCurrent){ const s=stopCurrent; stopCurrent=null; s(); } }
+const PROG_KEY="wordquest-5ci-progress";   // best (lowest) mistake rate per level
+function loadProg(){ try{ return JSON.parse(localStorage.getItem(PROG_KEY))||{}; }catch(e){ return {}; } }
+function saveProg(level,rate){ try{ const p=loadProg(); if(p[level]===undefined||rate<p[level]){ p[level]=rate; localStorage.setItem(PROG_KEY,JSON.stringify(p)); } }catch(e){} }
+const passed = (p,l) => p[l]!==undefined && p[l]<=UNLOCK.MAX_MISTAKE_RATE + 1e-9;
+const bossUnlocked = () => { const p=loadProg(); return [1,2,3,4].every(l=>passed(p,l)); };
+const pctStr = r => Math.round(r*100)+"%";
+const startLevel = n => (n===5 && !bossUnlocked()) ? locked() : [null,level1,level2,level3,level4,level5,level6][n]();
+
+/* ===== Locked screen for Level 5 ===== */
+function locked(){
+  leave(); $home.hidden=false;
+  const p=loadProg(), limit=pctStr(UNLOCK.MAX_MISTAKE_RATE);
+  $app.innerHTML=`
+    <div class="intro">
+      <div class="hero-row">🔒🐉</div>
+      <h1>BOSS BATTLE<br>IS LOCKED</h1>
+      <p style="font-size:17px;margin:0 0 14px">Finish Levels 1–4 with <b>${limit} mistakes or fewer</b> in each one to open the dragon's cave.</p>
+    </div>
+    <div class="cats" style="margin-top:14px">
+      ${LEVELS.slice(0,4).map(l=>{ const ok=passed(p,l.n), has=p[l.n]!==undefined;
+        return `<button class="cat" data-l="${l.n}" style="--cc:${ok?"var(--good)":"#cfc3ee"}"><span class="ic">${ok?"✅":l.icon}</span>
+          <span>Level ${l.n}: ${l.title}<small>${has?`Best: ${pctStr(p[l.n])} mistakes${ok?" – passed!":` – need ${limit} or fewer`}`:"Not played yet"}</small></span></button>`; }).join("")}
+    </div>`;
+  $app.querySelectorAll(".cat").forEach(b=>b.onclick=()=>startLevel(+b.dataset.l));
+}
+function bar(pos,total,right){ return `<div class="bar"><span class="pill">${pos}/${total}</span><div class="progress"><i style="width:${(pos-1)/total*100}%"></i></div><span class="pill" id="scorePill">${right}</span></div>`; }
+
+/* ===== Menu ===== */
+function menu(){
+  leave(); $home.hidden=true;
+  const best=loadBest(), prog=loadProg(), open5=bossUnlocked(), limit=pctStr(UNLOCK.MAX_MISTAKE_RATE);
+  const info = l => {
+    if(l.n===5) return open5 ? l.desc : `🔒 Finish Levels 1–4 with ${limit} mistakes or fewer to unlock. (${[1,2,3,4].filter(n=>passed(prog,n)).length}/4 done)`;
+    if(prog[l.n]===undefined) return l.desc;
+    return `${l.desc}<br><b style="color:${passed(prog,l.n)?"var(--good)":"var(--bad)"}">Best: ${pctStr(prog[l.n])} mistakes ${passed(prog,l.n)?"✅":"– aim for "+limit+" or fewer"}</b>`;
+  };
+  $app.innerHTML = `
+    <h1>Hello, word explorer! 👋</h1>
+    <p class="sub">Practise your Term 1 English words. Pick a level to start.</p>
+    <div class="levels">
+      ${LEVELS.map(l=>`
+        <button class="level ${l.boss?"boss":""}" data-l="${l.n}">
+          <div class="num" style="--nb:${l.bg}">${l.n===5&&!open5?"🔒":l.icon}</div>
+          <div><div class="t">Level ${l.n}: ${l.title}</div><div class="d">${info(l)}</div></div>
+          <div class="stars" title="Best score">${best[l.n]?starStr(best[l.n]):""}</div>
+        </button>`).join("")}
+    </div>
+    <button class="study-btn" id="study">📖 Study all the words first</button>`;
+  $app.querySelectorAll(".level").forEach(b=>b.onclick=()=>startLevel(+b.dataset.l));
+  document.getElementById("study").onclick=study;
+}
+$home.onclick=menu;
+
+/* ===== Study ===== */
+function study(){
+  leave(); $home.hidden=false;
+  $app.innerHTML = `<h1>📖 Word list</h1><p class="sub">Tap any word to hear it.</p>` +
+    Object.entries(CATS).map(([k,c])=>`
+      <div class="group" style="--cc:${c.color}">
+        <h3>${c.icon} ${esc(c.name)}</h3><div class="u">${esc(c.unit)}</div>
+        <div class="words">${WORDS.filter(o=>o.c===k).map(o=>`<button class="w" data-id="${o.id}">${o.p?`<span class="e">${o.p}</span>`:""}<b>${esc(o.w)}</b><span>${esc(o.d)}</span></button>`).join("")}</div>
+      </div>`).join("") +
+    `<div class="row"><button class="btn" id="go">I'm ready – let's play! 🚀</button></div>`;
+  $app.querySelectorAll(".w").forEach(b=>b.onclick=()=>say(WORDS[+b.dataset.id].w));
+  document.getElementById("go").onclick=menu;
+  window.scrollTo(0,0);
+}
+
+/* ===== Level 1: Picture Match (all picture words, 5 per round) ===== */
+function level1(){
+  leave(); $home.hidden=false;
+  const rounds=chunks(shuffle(PIC_WORDS),5), total=PIC_WORDS.length;
+  const st={round:0, matched:0, mistakes:0, missed:new Set(), done:new Set(), selPic:null, selWord:null, pics:[], words:[]};
+  function startRound(){ const set=rounds[st.round]; st.pics=shuffle(set); st.words=shuffle(set); st.done=new Set(); st.selPic=st.selWord=null; draw(); }
+  function draw(){
+    $app.innerHTML=`
+      <div class="bar"><span class="pill">Round ${st.round+1}/${rounds.length}</span><div class="progress"><i style="width:${st.matched/total*100}%"></i></div><span class="pill">❌ ${st.mistakes}</span></div>
+      <p class="prompt">Tap a picture, then tap the word that matches it.</p>
+      <div class="match">
+        <div class="col">${st.pics.map(o=>`<button class="tile pic ${st.done.has(o.id)?"done":""} ${st.selPic===o.id?"sel":""}" data-pic="${o.id}">${o.p}</button>`).join("")}</div>
+        <div class="col">${st.words.map(o=>`<button class="tile word ${st.done.has(o.id)?"done":""} ${st.selWord===o.id?"sel":""}" data-word="${o.id}">${esc(o.w)}</button>`).join("")}</div>
+      </div>`;
+    $app.querySelectorAll("[data-pic]").forEach(b=>b.onclick=()=>pick("pic",+b.dataset.pic));
+    $app.querySelectorAll("[data-word]").forEach(b=>b.onclick=()=>pick("word",+b.dataset.word));
+  }
+  function pick(kind,id){
+    if(st.done.has(id)) return;
+    if(kind==="pic") st.selPic = st.selPic===id?null:id; else { st.selWord = st.selWord===id?null:id; if(st.selWord!==null) say(WORDS[id].w); }
+    if(st.selPic!==null && st.selWord!==null){
+      const p=st.selPic, w=st.selWord; st.selPic=st.selWord=null;
+      if(p===w){
+        st.done.add(p); st.matched++; beep(true); draw();
+        if(st.done.size===rounds[st.round].length){ st.round++; later(()=> st.round<rounds.length ? startRound() : finish(), 700); }
+      }else{
+        st.mistakes++; st.missed.add(p); beep(false); draw();
+        const a=$app.querySelector(`[data-pic="${p}"]`), b=$app.querySelector(`[data-word="${w}"]`);
+        [a,b].forEach(el=>{el.classList.add("wrong"); anim(el,"shake");});
+        later(()=>[a,b].forEach(el=>el&&el.classList.remove("wrong")),500);
+      }
+    }else draw();
+  }
+  function finish(){
+    const got=Math.max(0,total-st.mistakes), pct=got/total;
+    result(1,{pct, mistakeRate:st.mistakes/total, missed:[...st.missed].map(i=>WORDS[i]), detail:`All ${total} words matched · ${st.mistakes} wrong ${st.mistakes===1?"try":"tries"}`});
+  }
+  startRound();
+}
+
+/* ===== Level 2: Sort it Out (all words) ===== */
+function level2(){
+  leave(); $home.hidden=false;
+  const qs=shuffle(WORDS), N=qs.length, st={i:0, score:0, missed:[]};
+  function draw(){
+    const q=qs[st.i];
+    $app.innerHTML= bar(st.i+1,N,`✅ ${st.score}`) + `
+      <p class="prompt">Which topic does this belong to?</p>
+      <div class="card pop"><button class="say" id="say" title="Listen">🔊</button><div class="big">${esc(q.w)}</div></div>
+      <div class="cats">${Object.entries(CATS).map(([k,c])=>`
+        <button class="cat" data-c="${k}" style="--cc:${c.color}"><span class="ic">${c.icon}</span><span>${esc(c.name)}<small>${esc(c.unit)}</small></span></button>`).join("")}</div>
+      <div class="feedback" id="fb"></div>`;
+    document.getElementById("say").onclick=()=>say(q.w);
+    $app.querySelectorAll(".cat").forEach(b=>b.onclick=()=>answer(b,q));
+  }
+  function answer(btn,q){
+    $app.querySelectorAll(".cat").forEach(b=>b.disabled=true);
+    const fb=document.getElementById("fb");
+    if(btn.dataset.c===q.c){
+      btn.classList.add("right"); st.score++; beep(true); fb.className="feedback good"; fb.textContent="Great job! 🎉"; say(q.w); later(next,900);
+    }else{
+      btn.classList.add("wrong"); anim(btn,"shake"); $app.querySelector(`.cat[data-c="${q.c}"]`).classList.add("right");
+      st.missed.push(q); beep(false); fb.className="feedback bad"; fb.textContent=`Oops! It goes in “${CATS[q.c].name}”.`; later(next,1900);
+    }
+    document.getElementById("scorePill").textContent=`✅ ${st.score}`;
+  }
+  function next(){ st.i++; st.i<N ? draw() : result(2,{pct:st.score/N, mistakeRate:(N-st.score)/N, missed:st.missed, detail:`${st.score} of ${N} correct`}); }
+  draw();
+}
+
+/* ===== Level 3: Spell it! (all picture words) ===== */
+function level3(){
+  leave(); $home.hidden=false;
+  const qs=shuffle(PIC_WORDS), N=qs.length;
+  const st={i:0, score:0, wrong:0, missed:[], revealed:1, helped:false, tries:0, locked:false};
+  function slotsHTML(q){
+    let li=0;
+    return [...q.t].map(ch=>{
+      if(ch===" ") return `<span class="slot gap"></span>`;
+      if(!/[a-z]/i.test(ch)) return `<span class="slot shown">${esc(ch)}</span>`;
+      const show = li++ < st.revealed;
+      return `<span class="slot ${show?"shown":""}">${show?esc(ch):""}</span>`;
+    }).join("");
+  }
+  function draw(){
+    const q=qs[st.i], c=CATS[q.c];
+    $app.innerHTML= bar(st.i+1,N,`⭐ ${st.score}`) + `
+      <p class="prompt">What is this? Type the word.</p>
+      <div class="card pop">
+        <div class="picbig">${q.p}</div>
+        <span class="hintcat">${c.icon} ${esc(c.name)}</span>
+        <div class="slots" id="slots">${slotsHTML(q)}</div>
+      </div>
+      <form class="typebox" id="f" autocomplete="off">
+        <input id="inp" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type here…" aria-label="Your answer">
+        <button class="btn" type="submit">Check</button>
+      </form>
+      <div class="tools">
+        <button class="btn ghost" id="hear">🔊 Hear it</button>
+        <button class="btn ghost" id="hint">💡 Show a letter</button>
+        <button class="btn ghost" id="skip">⏭️ Skip</button>
+      </div>
+      <div class="feedback" id="fb"></div>`;
+    const inp=document.getElementById("inp"); inp.focus();
+    document.getElementById("f").onsubmit=e=>{e.preventDefault(); check(q,inp);};
+    document.getElementById("hear").onclick=()=>{ if(st.locked) return; st.helped=true; say(q.t); inp.focus(); };
+    document.getElementById("hint").onclick=()=>{
+      if(st.locked) return;
+      const letters=q.t.replace(/[^a-z]/gi,"").length;
+      if(st.revealed<letters-1){ st.revealed++; st.helped=true; document.getElementById("slots").innerHTML=slotsHTML(q); }
+      inp.focus();
+    };
+    document.getElementById("skip").onclick=()=>{ if(!st.locked) giveUp(q); };
+  }
+  function check(q,inp){
+    if(st.locked) return;
+    const v=norm(inp.value); if(!v) return;
+    const fb=document.getElementById("fb");
+    if(v===norm(q.t) || v===norm(q.w)){
+      st.locked=true; const pts=(!st.helped && st.tries===0)?3:1; st.score+=pts;
+      inp.classList.add("right"); st.revealed=99; document.getElementById("slots").innerHTML=slotsHTML(q);
+      beep(true); say(q.t); fb.className="feedback good"; fb.textContent = pts===3?"Perfect! +3 ⭐":"Correct! +1 ⭐";
+      document.getElementById("scorePill").textContent=`⭐ ${st.score}`;
+      later(next,1300);
+    }else{
+      st.tries++; if(st.tries===1) st.wrong++; beep(false); inp.classList.add("wrong"); anim(inp,"shake"); setTimeout(()=>inp.classList.remove("wrong"),500);
+      if(st.tries>=3){ giveUp(q); return; }
+      fb.className="feedback bad"; fb.textContent = st.tries===1 ? "Not quite – try again! 💪" : "One more try! Use a hint if you need it.";
+      inp.select();
+    }
+  }
+  function giveUp(q){
+    if(st.tries===0) st.wrong++;
+    st.locked=true; st.missed.push(q); st.revealed=99; document.getElementById("slots").innerHTML=slotsHTML(q);
+    const fb=document.getElementById("fb"); fb.className="feedback bad"; fb.textContent=`The answer is “${q.t}”.`;
+    say(q.t); later(next,2200);
+  }
+  function next(){
+    st.i++; st.revealed=1; st.helped=false; st.tries=0; st.locked=false;
+    st.i<N ? draw() : result(3,{pct:st.score/(N*3), mistakeRate:st.wrong/N, missed:st.missed, detail:`${st.score} of ${N*3} stars`});
+  }
+  draw();
+}
+
+/* ===== Level 4: What does it mean? (all words, 4 choices) ===== */
+function level4(){
+  leave(); $home.hidden=false;
+  const qs=shuffle(WORDS), N=qs.length, st={i:0, score:0, missed:[]};
+  function options(o){
+    const pool=WORDS.filter(x=>x.id!==o.id && !(x.k && x.k===o.k));
+    const same=shuffle(pool.filter(x=>x.c===o.c)).slice(0,2);
+    const other=shuffle(pool.filter(x=>!same.includes(x))).slice(0,3-same.length);
+    return shuffle([o,...same,...other]);
+  }
+  function draw(){
+    const q=qs[st.i], opts=options(q);
+    $app.innerHTML= bar(st.i+1,N,`✅ ${st.score}`) + `
+      <p class="prompt">What does this mean? Pick the best answer.</p>
+      <div class="card pop"><button class="say" id="say" title="Listen">🔊</button><div class="big">${esc(q.w)}</div></div>
+      <div class="cats">${opts.map((o,i)=>`
+        <button class="cat" data-id="${o.id}"><span class="ic letter">${"ABCD"[i]}</span><span>${esc(o.d)}</span></button>`).join("")}</div>
+      <div class="feedback" id="fb"></div>`;
+    document.getElementById("say").onclick=()=>say(q.w);
+    $app.querySelectorAll(".cat").forEach(b=>b.onclick=()=>answer(b,q));
+  }
+  function answer(btn,q){
+    $app.querySelectorAll(".cat").forEach(b=>b.disabled=true);
+    const fb=document.getElementById("fb");
+    if(+btn.dataset.id===q.id){
+      btn.classList.add("right"); st.score++; beep(true); fb.className="feedback good"; fb.textContent="Correct! 🎉"; later(next,1000);
+    }else{
+      btn.classList.add("wrong"); anim(btn,"shake"); $app.querySelector(`.cat[data-id="${q.id}"]`).classList.add("right");
+      st.missed.push(q); beep(false); fb.className="feedback bad"; fb.textContent="Not this one – look at the green answer."; later(next,2400);
+    }
+    document.getElementById("scorePill").textContent=`✅ ${st.score}`;
+  }
+  function next(){ st.i++; st.i<N ? draw() : result(4,{pct:st.score/N, mistakeRate:(N-st.score)/N, missed:st.missed, detail:`${st.score} of ${N} correct`}); }
+  draw();
+}
+
+/* ===== Level 5: Boss Battle ===== */
+function level5(){
+  leave(); $home.hidden=false;
+  const rates=[0.05,0.10,0.15,0.20];
+  $app.innerHTML=`
+    <div class="intro">
+      <div class="hero-row">🧙 ⚔️ 🐉</div>
+      <h1>BOSS BATTLE:<br>THE WORD DRAGON</h1>
+      <ul>
+        <li>The dragon drops words from the sky.</li>
+        <li>Move the falling word with <b>◀ ▶</b> (or arrow keys / A, D) into the right topic bucket.</li>
+        <li>Tap a bucket to throw the word straight in. <b>▼</b> or Space drops it fast.</li>
+        <li>Every right answer zaps the dragon ⚡. A wrong answer costs a ❤️ and the word comes back later.</li>
+        <li>Sort all ${WORDS.length} words to win!</li>
+      </ul>
+      <p>Words you can miss before game over:
+        <select id="rate">${rates.map(r=>`<option value="${r}" ${r===BOSS.MISS_RATE?"selected":""}>${Math.round(r*100)}% (${Math.max(1,Math.round(WORDS.length*r))} words)</option>`).join("")}</select>
+      </p>
+      <button class="btn" id="startBoss">PRESS START</button>
+    </div>`;
+  document.getElementById("startBoss").onclick=()=>{ BOSS.MISS_RATE=+document.getElementById("rate").value; tone([523,659,784,1046],"square",0.08,0.09,0.12); bossGame(); };
+}
+
+function bossGame(){
+  const total=WORDS.length, maxMiss=Math.max(1,Math.round(total*BOSS.MISS_RATE));
+  let gone=false, queue=shuffle(WORDS), hp=total, misses=0, missed=[], cur=null, paused=false, alive=true, raf=0, last=0, waitUntil=0, heroLane=2;
+  $app.innerHTML=`
+    <div class="hud">
+      <span class="hearts" id="hearts"></span>
+      <span id="left"></span>
+      <button id="pauseBtn">⏸ PAUSE</button>
+    </div>
+    <div class="arena" id="arena">
+      <div class="boss"><div class="face" id="bossFace">🐉</div><div class="hpbar"><i id="hp" style="width:100%"></i></div><div class="bossname">WORD DRAGON</div></div>
+      <div class="fword" id="fw" hidden></div>
+      <div class="heroman" id="hero">🧙</div>
+      <div class="toast" id="toast"></div>
+      <div class="buckets">${CAT_KEYS.map((k,i)=>`<button class="bucket" data-lane="${i}" style="--cc:${CATS[k].color}"><span class="bi">${CATS[k].icon}</span>${CATS[k].short}</button>`).join("")}</div>
+      <div class="pauseveil" id="veil">PAUSED<br><small>tap to continue</small></div>
+    </div>
+    <div class="pad"><button id="lb" aria-label="Move left">◀</button><button id="db" aria-label="Drop">▼</button><button id="rb" aria-label="Move right">▶</button></div>
+    <div class="keys-hint">Keyboard: ← → to move · ↓ or Space to drop · P to pause</div>`;
+  const arena=document.getElementById("arena"), fw=document.getElementById("fw"), hero=document.getElementById("hero"),
+        face=document.getElementById("bossFace"), toastEl=document.getElementById("toast"), veil=document.getElementById("veil"),
+        buckets=[...arena.querySelectorAll(".bucket")];
+
+  function hud(){
+    const left=maxMiss-misses;
+    document.getElementById("hearts").textContent = maxMiss<=10 ? "❤️".repeat(left)+"🖤".repeat(misses) : `❤️×${left}`;
+    document.getElementById("left").textContent=`HP ${hp}/${total}`;
+    document.getElementById("hp").style.width=(hp/total*100)+"%";
+  }
+  const laneX = lane => (lane+0.5)*arena.clientWidth/5;
+  function place(){
+    const W=arena.clientWidth, H=arena.clientHeight, bucketTop=H-82, heroH=hero.offsetHeight||46;
+    heroLane += ((cur?cur.target:heroLane)-heroLane)*0.25;
+    hero.style.transform=`translate(${laneX(heroLane)-hero.offsetWidth/2}px,${bucketTop-heroH-2}px)`;
+    if(!cur) return;
+    const cw=fw.offsetWidth, ch=fw.offsetHeight, startY=H*0.22, endY=bucketTop-heroH-ch-4;
+    const x=Math.min(W-cw-6,Math.max(6,laneX(cur.lane)-cw/2));
+    fw.style.transform=`translate(${x}px,${startY+(endY-startY)*Math.min(1,cur.y)}px)`;
+  }
+  function spawn(){
+    const o=queue.shift();
+    cur={o, lane:2, target:2, y:0, fast:false};
+    fw.innerHTML=`${o.p?`<span class="e">${o.p}</span>`:""}${esc(o.w)}`; fw.hidden=false; place();
+  }
+  function move(d){ if(!cur||paused) return; cur.target=Math.max(0,Math.min(4,cur.target+d)); tone([440],"square",0.04,0,0.05); }
+  function drop(){ if(!cur||paused) return; cur.fast=true; }
+  function throwTo(lane){ if(!cur||paused) return; cur.target=lane; cur.fast=true; }
+  function toast(msg){ toastEl.textContent=msg; toastEl.classList.add("show"); setTimeout(()=>toastEl.classList.remove("show"),1500); }
+  function bolt(){
+    const b=document.createElement("div"); b.className="bolt"; b.textContent="⚡"; arena.appendChild(b);
+    const hr=hero.getBoundingClientRect(), fr=face.getBoundingClientRect(), ar=arena.getBoundingClientRect();
+    const x0=hr.left-ar.left+hr.width/2-15, y0=hr.top-ar.top, x1=fr.left-ar.left+fr.width/2-15, y1=fr.top-ar.top+fr.height/2-15;
+    try{ b.animate([{transform:`translate(${x0}px,${y0}px) scale(.6)`},{transform:`translate(${x1}px,${y1}px) scale(1.4)`}],{duration:320,easing:"ease-in"}).onfinish=()=>b.remove(); }
+    catch(e){ b.remove(); }
+  }
+  function land(){
+    const lane=Math.round(cur.target), o=cur.o, ok=CAT_KEYS[lane]===o.c;
+    cur=null; fw.hidden=true;
+    if(ok){
+      hp--; anim(buckets[lane],"good"); bolt(); tone([880,1320],"square",0.07,0.06,0.1);
+      setTimeout(()=>{ anim(face,"hit"); tone([140,90],"sawtooth",0.07,0.05,0.12); hud(); },300);
+      if(hp===0){ setTimeout(()=>{ face.classList.add("dead"); tone([523,659,784,1046,1318],"square",0.08,0.12,0.18); },350); return end(true); }
+    }else{
+      misses++; missed.push(o); anim(buckets[lane],"bad"); anim(hero,"hurt");
+      const right=CAT_KEYS.indexOf(o.c); buckets[right].classList.add("hint"); setTimeout(()=>buckets[right].classList.remove("hint"),1500);
+      toast(`“${o.w}” → ${CATS[o.c].icon} ${CATS[o.c].short}`); tone([200,150,110],"sawtooth",0.08,0.1,0.15); hud();
+      queue.splice(Math.min(queue.length,3+Math.floor(Math.random()*5)),0,o);
+      if(misses>=maxMiss){ hero.classList.add("dead"); hero.textContent="👻"; return end(false); }
+    }
+    waitUntil=performance.now()+ (ok?650:1500);
+  }
+  function loop(t){
+    if(!alive) return;
+    raf=requestAnimationFrame(loop);
+    const dt=Math.min(50,t-(last||t)); last=t;
+    if(paused) return;
+    if(!cur){ if(t>=waitUntil && queue.length) spawn(); place(); return; }
+    const progress=1-hp/total, fallMs=BOSS.FALL_MS_START-(BOSS.FALL_MS_START-BOSS.FALL_MS_END)*progress;
+    cur.y += dt/(cur.fast?380:fallMs);
+    cur.lane += (cur.target-cur.lane)*Math.min(1,dt/70);
+    place();
+    if(cur.y>=1) land();
+  }
+  function setPause(p){ if(!alive) return; paused=p; veil.classList.toggle("on",p); document.getElementById("pauseBtn").textContent=p?"▶ PLAY":"⏸ PAUSE"; }
+  function onKey(e){
+    const k=e.key.toLowerCase();
+    if(k==="arrowleft"||k==="a"){ move(-1); e.preventDefault(); }
+    else if(k==="arrowright"||k==="d"){ move(1); e.preventDefault(); }
+    else if(k==="arrowdown"||k==="s"||k===" "){ drop(); e.preventDefault(); }
+    else if(k==="p"||k==="escape"){ setPause(!paused); }
+  }
+  function onVis(){ if(document.hidden) setPause(true); }
+  function stop(){ gone=true; alive=false; cancelAnimationFrame(raf); document.removeEventListener("keydown",onKey); document.removeEventListener("visibilitychange",onVis); }
+  function end(win){
+    alive=false; setTimeout(()=>{ if(gone) return; stop(); stopCurrent=null;
+      const stars = !win ? 0 : misses===0 ? 3 : misses<=maxMiss/2 ? 2 : 1;
+      result(5,{stars, missed, title: win?"You beat the Word Dragon! 🏆":"Game over! 👻",
+        detail: win ? `Dragon defeated with ${misses} ${misses===1?"miss":"misses"} (limit ${maxMiss})` : `You sorted ${total-hp} of ${total} words before running out of hearts`});
+    }, win?1300:1400);
+  }
+
+  document.addEventListener("keydown",onKey);
+  document.addEventListener("visibilitychange",onVis);
+  stopCurrent=stop;
+  document.getElementById("lb").onclick=()=>move(-1);
+  document.getElementById("rb").onclick=()=>move(1);
+  document.getElementById("db").onclick=drop;
+  document.getElementById("pauseBtn").onclick=()=>setPause(!paused);
+  veil.onclick=()=>setPause(false);
+  buckets.forEach(b=>b.onclick=()=>throwTo(+b.dataset.lane));
+  hud(); waitUntil=performance.now()+600;
+  arena.scrollIntoView({block:"center",behavior:"smooth"});
+  raf=requestAnimationFrame(loop);
+}
+
+/* ===== Level 6: Word Runner (platformer) ===== */
+function level6(){
+  leave(); $home.hidden=false;
+  const opts=[10,20,WORDS.length];
+  $app.innerHTML=`
+    <div class="intro" style="background:linear-gradient(160deg,#1565c0,#3fa7ff)">
+      <div class="hero-row">🦉💨 🟨</div>
+      <h1>WORD RUNNER</h1>
+      <ul>
+        <li>A meaning appears at the top. Find the word that matches it!</li>
+        <li>Run with <b>◀ ▶</b> and press <b>JUMP</b> to hit the right word block from below with your head.</li>
+        <li>Hitting a wrong block, bumping into a snail 🐌 or falling into a hole costs a ❤️. Jump on snails to squash them.</li>
+        <li>You have ${RUNNER.TIME_PER_WORD} seconds for each word. The faster you are, the more points you get!</li>
+      </ul>
+      <p>How many words? <select id="cnt">${opts.map(n=>`<option value="${n}" ${n===WORDS.length?"selected":""}>${n===WORDS.length?`All ${n}`:n}</option>`).join("")}</select></p>
+      <button class="btn" id="go">PRESS START</button>
+    </div>`;
+  document.getElementById("go").onclick=()=>{ tone([523,659,784,1046],"square",0.08,0.09,0.12); runnerGame(+document.getElementById("cnt").value); };
+}
+
+function runnerGame(count){
+  let W=800; const H=450, GROUND=400, G=0.0022, JUMP=0.86, SPEED=0.3, L=2500;
+  const BFONT="700 16px 'Baloo 2', system-ui, sans-serif";
+  const qs=shuffle(WORDS).slice(0,count), N=qs.length, TOTAL_MS=RUNNER.TIME_PER_WORD*1000;
+  let qi=0, lives=RUNNER.LIVES, score=0, correct=0, missed=[], tleft=TOTAL_MS;
+  let phase="play", clock=0, freezeUntil=0, afterFreeze=null, msg=null, parts=[];
+  let world=null, hero=null, camX=0, paused=false, alive=true, gone=false, raf=0, last=0, jumpBuf=0;
+  const keys={left:false,right:false,jump:false};
+
+  $app.innerHTML=`
+    <div class="phud">
+      <div class="pstats"><span class="hearts" id="rh"></span><span id="rq"></span><span id="rs"></span><button id="rp">⏸</button></div>
+      <div class="desc"><button class="say" id="rsay" title="Read the meaning aloud">🔊</button><small>Find the word that means:</small><div id="rd"></div></div>
+      <div class="tbar"><i id="rt"></i></div>
+    </div>
+    <div class="stage"><canvas id="cv"></canvas><div class="pauseveil" id="rveil">PAUSED<br><small>tap to continue</small></div></div>
+    <div class="pad run"><button id="bl" aria-label="Run left">◀</button><button id="br" aria-label="Run right">▶</button><button id="bj" class="jumpbtn">JUMP</button></div>
+    <div class="keys-hint">Keyboard: ← → to run · ↑ or Space to jump · P to pause</div>`;
+  const cv=document.getElementById("cv"), ctx=cv.getContext("2d"), veil=document.getElementById("rveil");
+  function fit(){ W = $app.clientWidth<600 ? 540 : 800; cv.style.aspectRatio=`${W}/${H}`; const r=cv.getBoundingClientRect(), dpr=window.devicePixelRatio||1; cv.width=Math.max(1,Math.round(r.width*dpr)); cv.height=Math.round(r.width*H/W*dpr); ctx.setTransform(cv.width/W,0,0,cv.width/W,0,0); }
+
+  const overlap=(a,b)=>a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y;
+  function wrapLabel(t){
+    ctx.font=BFONT; if(ctx.measureText(t).width<=210) return [t];
+    const ws=t.split(" "); let best=[t], bw=1e9;
+    for(let i=1;i<ws.length;i++){ const a=ws.slice(0,i).join(" "), b=ws.slice(i).join(" "); const m=Math.max(ctx.measureText(a).width,ctx.measureText(b).width); if(m<bw){bw=m;best=[a,b];} }
+    return best;
+  }
+  function build(){
+    const q=qs[qi];
+    const pool=WORDS.filter(x=>x.id!==q.id && !(x.k && x.k===q.k));
+    const same=shuffle(pool.filter(x=>x.c===q.c)).slice(0,2);
+    const other=shuffle(pool.filter(x=>!same.includes(x))).slice(0,3-same.length);
+    const opts=shuffle([q,...same,...other]);
+    const solids=[], blocks=[], enemies=[], coins=[];
+    const gaps=[[760,840],[1880,1960]];
+    let gx=0; for(const [a,b] of gaps){ solids.push({x:gx,y:GROUND,w:a-gx,h:120,t:"ground"}); gx=b; }
+    solids.push({x:gx,y:GROUND,w:L-gx,h:120,t:"ground"});
+    solids.push({x:1335,y:GROUND-64,w:52,h:64,t:"pillar"});
+    const slotX=[520,1080,1640,2200];
+    opts.forEach((o,i)=>{
+      const lines=wrapLabel(o.w); ctx.font=BFONT;
+      const w=Math.max(96,Math.max(...lines.map(s=>ctx.measureText(s).width))+30), h=lines.length>1?56:38;
+      const high=Math.random()<0.5, bottom=high?182:292;
+      if(high) solids.push({x:slotX[i]-130,y:300,w:260,h:22,t:"brick"});
+      const b={x:slotX[i]-w/2,y:bottom-h,w,h,t:"block",o,lines,state:"new",bump:0};
+      blocks.push(b); solids.push(b);
+    });
+    const zones=[[380,740],[860,1310],[1410,1860],[1980,2450]];
+    shuffle(zones).slice(0,3).forEach(([a,b])=>{
+      const x=a+40+Math.random()*(b-a-110);
+      enemies.push({x,y:GROUND-28,w:32,h:28,vx:(Math.random()<.5?-1:1)*(0.04+Math.random()*0.03),min:a,max:b,alive:true,sq:0});
+    });
+    zones.forEach(([a,b])=>{ for(let i=0;i<2;i++) coins.push({x:a+30+Math.random()*(b-a-60),y:GROUND-60-Math.random()*60,got:false}); });
+    world={solids,blocks,enemies,coins};
+    hero={x:80,y:GROUND-38,w:30,h:38,vx:0,vy:0,on:true,face:1,inv:0,safeX:80};
+    camX=0; tleft=TOTAL_MS; msg=null; parts=[];
+    hud();
+  }
+  function hud(){
+    document.getElementById("rh").textContent="❤️".repeat(Math.max(0,lives))+"🖤".repeat(RUNNER.LIVES-Math.max(0,lives));
+    document.getElementById("rq").textContent=`Word ${Math.min(qi+1,N)}/${N}`;
+    document.getElementById("rs").textContent=`⭐ ${score}`;
+    document.getElementById("rd").textContent=qs[Math.min(qi,N-1)].d;
+  }
+  function hudTimer(){ const el=document.getElementById("rt"); if(!el) return; el.style.width=Math.max(0,tleft/TOTAL_MS*100)+"%"; el.classList.toggle("low",tleft<10000); }
+  function show(text,ms=1500){ msg={text,until:clock+ms}; }
+  function pop(x,y,text){ parts.push({x,y,text,t:900}); }
+  function freeze(ms,fn){ if(phase!=="over") phase="freeze"; freezeUntil=clock+ms; afterFreeze=fn; }
+  function hurt(text){
+    lives--; hud(); show(text,1800); tone([200,150,110],"sawtooth",0.08,0.1,0.15);
+    if(lives<=0){ phase="over"; freezeUntil=clock+1800; afterFreeze=()=>end(false); }
+  }
+  function hit(b){
+    b.bump=1;
+    if(phase!=="play" || b.state!=="new"){ tone([300],"square",0.04,0,0.05); return; }
+    const q=qs[qi];
+    if(b.o.id===q.id){
+      b.state="right"; correct++; const pts=100+Math.ceil(tleft/1000)*5; score+=pts; hud();
+      pop(b.x+b.w/2,b.y-8,`+${pts}`); tone([988,1319,1568],"square",0.07,0.08,0.12); say(b.o.w);
+      show(`✅ ${b.o.w}!`,1600); freeze(1700,next);
+    }else{
+      b.state="wrong"; if(!missed.includes(q)) missed.push(q);
+      hurt(`❌ Not “${b.o.w}” – keep looking!`);
+    }
+  }
+  function timeout(){
+    const q=qs[qi]; if(!missed.includes(q)) missed.push(q);
+    world.blocks.forEach(b=>{ if(b.o.id===q.id) b.state="reveal"; });
+    tleft=0; hurt(`⏰ Time's up! It was “${q.w}”`);
+    if(phase!=="over"){ freeze(2400,next); const rb=world.blocks.find(b=>b.state==="reveal"); if(rb) camX=Math.max(0,Math.min(L-W,rb.x+rb.w/2-W/2)); }
+  }
+  function next(){ qi++; if(qi>=N) return end(true); build(); phase="play"; }
+
+  function step(dt){
+    const h=hero, ctl=phase==="play";
+    h.stun=Math.max(0,(h.stun||0)-dt);
+    const dir=(ctl&&!h.stun)?(keys.right?1:0)-(keys.left?1:0):0;
+    h.vx=dir*SPEED; if(dir) h.face=dir;
+    jumpBuf=Math.max(0,jumpBuf-dt);
+    if(ctl && jumpBuf>0 && h.on){ h.vy=-JUMP; h.on=false; jumpBuf=0; tone([523,784],"square",0.05,0.05,0.08); }
+    if(!keys.jump && h.vy<-0.35) h.vy=-0.35;
+    h.vy=Math.min(1.1,h.vy+G*dt);
+    h.x+=h.vx*dt; h.x=Math.max(0,Math.min(L-h.w,h.x));
+    for(const s of world.solids) if(overlap(h,s)){ if(h.vx>0) h.x=s.x-h.w; else if(h.vx<0) h.x=s.x+s.w; }
+    h.y+=h.vy*dt; h.on=false;
+    for(const s of world.solids) if(overlap(h,s)){
+      if(h.vy>0){ h.y=s.y-h.h; h.vy=0; h.on=true; if(s.t==="ground") h.safeX=Math.min(Math.max(h.x,s.x+20),s.x+s.w-h.w-120); }
+      else if(h.vy<0){ h.y=s.y+s.h; h.vy=0; if(s.t==="block") hit(s); }
+    }
+    h.inv=Math.max(0,h.inv-dt);
+    if(h.y>H+40){
+      if(phase==="play") hurt("🕳️ Oops! You fell in a hole");
+      h.x=h.safeX; h.y=GROUND-h.h-80; h.vy=0; h.inv=1500; h.stun=700;
+    }
+    for(const e of world.enemies){
+      if(!e.alive){ e.sq-=dt; continue; }
+      e.x+=e.vx*dt; if(e.x<e.min){e.x=e.min;e.vx*=-1;} if(e.x+e.w>e.max){e.x=e.max-e.w;e.vx*=-1;}
+      if(phase==="play" && overlap(h,e)){
+        if(h.vy>0 && h.y+h.h-e.y<18){ e.alive=false; e.sq=450; h.vy=-0.6; score+=50; hud(); pop(e.x+e.w/2,e.y,"+50"); tone([392,262],"square",0.06,0.06,0.1); }
+        else if(h.inv<=0){ h.inv=1600; h.vy=-0.5; h.x+=h.x<e.x?-40:40; h.x=Math.max(0,h.x); hurt("🐌 Ouch! A snail!"); }
+      }
+    }
+    world.enemies=world.enemies.filter(e=>e.alive||e.sq>0);
+    for(const c of world.coins) if(!c.got && overlap(h,{x:c.x-10,y:c.y-10,w:20,h:20})){ c.got=true; score+=10; hud(); tone([1319,1760],"square",0.05,0.05,0.08); }
+    for(const b of world.blocks) b.bump=Math.max(0,b.bump-dt/220);
+    for(const p of parts){ p.t-=dt; p.y-=dt*0.05; } parts=parts.filter(p=>p.t>0);
+    if(phase==="play"){ tleft-=dt; if(tleft<=0) timeout(); }
+    if(phase==="play") camX=Math.max(0,Math.min(L-W,h.x+h.w/2-W*0.42));
+  }
+
+  function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function cloud(x,y){ ctx.beginPath(); ctx.arc(x,y,22,0,7); ctx.arc(x+26,y-10,28,0,7); ctx.arc(x+56,y,22,0,7); ctx.fill(); }
+  function drawSolid(s){
+    if(s.t==="ground"){
+      ctx.fillStyle="#c9773a"; ctx.fillRect(s.x,s.y,s.w,s.h);
+      ctx.fillStyle="#a85e2a"; for(let x=s.x+14;x<s.x+s.w-6;x+=34){ ctx.fillRect(x,s.y+24+((x*7)%14),6,6); }
+      ctx.fillStyle="#4cbb47"; ctx.fillRect(s.x,s.y,s.w,12); ctx.fillStyle="#3a9a37"; ctx.fillRect(s.x,s.y+10,s.w,3);
+    }else if(s.t==="brick"){
+      ctx.fillStyle="#d9653b"; ctx.fillRect(s.x,s.y,s.w,s.h);
+      ctx.strokeStyle="#9e3f22"; ctx.lineWidth=2; ctx.strokeRect(s.x+1,s.y+1,s.w-2,s.h-2);
+      ctx.beginPath(); for(let x=s.x+26;x<s.x+s.w;x+=26){ ctx.moveTo(x,s.y); ctx.lineTo(x,s.y+s.h); } ctx.stroke();
+    }else if(s.t==="pillar"){
+      ctx.fillStyle="#8d8d9b"; ctx.fillRect(s.x,s.y,s.w,s.h); ctx.fillStyle="#a9a9b8"; ctx.fillRect(s.x-5,s.y,s.w+10,12);
+      ctx.fillStyle="#76768a"; ctx.fillRect(s.x+8,s.y+16,6,s.h-20);
+    }
+  }
+  function drawBlock(b){
+    const off=Math.sin(b.bump*Math.PI)*8, y=b.y-off;
+    let fill="#ffcc33", line="#a86b00";
+    if(b.state==="right"){ fill="#3ad17a"; line="#16824a"; }
+    else if(b.state==="wrong"){ fill="#c4bfd2"; line="#7d7891"; }
+    else if(b.state==="reveal"){ const on=Math.floor(clock/250)%2; fill=on?"#3ad17a":"#ffffff"; line="#16824a"; }
+    ctx.fillStyle="#0002"; rr(b.x+3,y+4,b.w,b.h,8); ctx.fill();
+    ctx.fillStyle=fill; rr(b.x,y,b.w,b.h,8); ctx.fill(); ctx.lineWidth=3; ctx.strokeStyle=line; ctx.stroke();
+    ctx.fillStyle=line; [[6,6],[b.w-6,6],[6,b.h-6],[b.w-6,b.h-6]].forEach(([dx,dy])=>{ ctx.beginPath(); ctx.arc(b.x+dx,y+dy,2,0,7); ctx.fill(); });
+    ctx.fillStyle=b.state==="wrong"?"#6f6890":"#2b2350"; ctx.font=BFONT; ctx.textAlign="center"; ctx.textBaseline="middle";
+    b.lines.forEach((s,i)=>ctx.fillText(s,b.x+b.w/2,y+b.h/2+(i-(b.lines.length-1)/2)*18+1));
+    if(b.state==="wrong"){ ctx.strokeStyle="#e5484d"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(b.x+8,y+8); ctx.lineTo(b.x+b.w-8,y+b.h-8); ctx.stroke(); }
+  }
+  function draw(){
+    const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,"#5ec8ff"); g.addColorStop(1,"#c8eeff"); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle="#ffffffdd"; for(let i=0;i<7;i++){ const span=W+300, x=((i*330-camX*0.3)%span+span)%span-150; cloud(x,40+(i*47)%100); }
+    ctx.fillStyle="#8fdc8f"; for(let i=0;i<9;i++){ const x=i*400-camX*0.5; ctx.beginPath(); ctx.ellipse(x,GROUND+4,170,80+(i%3)*30,0,Math.PI,0); ctx.fill(); }
+    ctx.save(); ctx.translate(-Math.round(camX),0);
+    for(const s of world.solids) if(s.t!=="block") drawSolid(s);
+    for(const c of world.coins){ if(c.got) continue; const by=Math.sin(clock/250+c.x)*3; ctx.fillStyle="#ffd23f"; ctx.beginPath(); ctx.ellipse(c.x,c.y+by,8,10,0,0,7); ctx.fill(); ctx.strokeStyle="#c79400"; ctx.lineWidth=2; ctx.stroke(); ctx.fillStyle="#fff7"; ctx.fillRect(c.x-2,c.y+by-6,3,8); }
+    for(const b of world.blocks) drawBlock(b);
+    ctx.textAlign="center"; ctx.textBaseline="bottom";
+    for(const e of world.enemies){
+      ctx.save(); ctx.translate(e.x+e.w/2,e.y+e.h); if(e.vx>0) ctx.scale(-1,1); if(!e.alive) ctx.scale(1.2,0.35);
+      ctx.fillStyle="#000"; ctx.font="30px serif"; ctx.fillText("🐌",0,3); ctx.restore();
+    }
+    const h=hero;
+    if(!(h.inv>0 && Math.floor(clock/90)%2)){
+      ctx.fillStyle="#0003"; ctx.beginPath(); ctx.ellipse(h.x+h.w/2,(h.on?h.y+h.h:GROUND)+1,14,4,0,0,7); ctx.fill();
+      ctx.save(); ctx.translate(h.x+h.w/2,h.y+h.h); if(h.face<0) ctx.scale(-1,1);
+      const bob=h.on&&h.vx?Math.abs(Math.sin(clock/70))*-4:0, tilt=h.on?(h.vx?0.08:0):-0.12;
+      ctx.rotate(tilt); ctx.fillStyle="#000"; ctx.font="40px serif"; ctx.fillText("🦉",0,4+bob); ctx.restore();
+    }
+    ctx.font="800 20px 'Baloo 2', sans-serif";
+    for(const p of parts){ ctx.globalAlpha=Math.min(1,p.t/400); ctx.fillStyle="#fff"; ctx.strokeStyle="#2b2350"; ctx.lineWidth=4; ctx.strokeText(p.text,p.x,p.y); ctx.fillText(p.text,p.x,p.y); }
+    ctx.globalAlpha=1; ctx.restore();
+    if(msg && clock<msg.until){
+      ctx.font="800 22px 'Baloo 2', sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+      const tw=Math.min(W-40,ctx.measureText(msg.text).width+36);
+      ctx.fillStyle="#000b"; rr(W/2-tw/2,18,tw,44,14); ctx.fill(); ctx.fillStyle="#fff"; ctx.fillText(msg.text,W/2,41,W-60);
+    }
+  }
+  function loop(t){
+    if(!alive) return;
+    raf=requestAnimationFrame(loop);
+    let dt=Math.min(50,t-(last||t)); last=t;
+    if(!paused){
+      clock+=dt;
+      while(dt>0 && alive){ const d=Math.min(16,dt); step(d); dt-=d; }
+      if(alive && phase!=="play" && afterFreeze && clock>=freezeUntil){ const f=afterFreeze; afterFreeze=null; f(); }
+    }
+    if(alive){ draw(); hudTimer(); }
+  }
+  function setPause(p){ if(!alive) return; paused=p; veil.classList.toggle("on",p); document.getElementById("rp").textContent=p?"▶":"⏸"; keys.left=keys.right=keys.jump=false; }
+  const KEYMAP={arrowleft:"left",a:"left",arrowright:"right",d:"right",arrowup:"jump",w:"jump"," ":"jump"};
+  function onDown(e){
+    const k=e.key.toLowerCase();
+    if(k==="p"||k==="escape"){ setPause(!paused); return; }
+    const m=KEYMAP[k]; if(!m) return; e.preventDefault();
+    if(m==="jump" && !keys.jump) jumpBuf=130;
+    keys[m]=true;
+  }
+  function onUp(e){ const m=KEYMAP[e.key.toLowerCase()]; if(!m) return; e.preventDefault(); keys[m]=false; }
+  function onVis(){ if(document.hidden) setPause(true); }
+  function stop(){ gone=true; alive=false; cancelAnimationFrame(raf); document.removeEventListener("keydown",onDown); document.removeEventListener("keyup",onUp); document.removeEventListener("visibilitychange",onVis); window.removeEventListener("resize",fit); }
+  function end(win){
+    if(gone) return; stop(); stopCurrent=null;
+    result(6,{pct:correct/N, missed, title: win?"You finished the course! 🏁":"Game over! 🦉",
+      detail:`${correct} of ${N} words found · ${score} points`});
+  }
+  function hold(id,m){
+    const b=document.getElementById(id);
+    const on=e=>{ e.preventDefault(); if(m==="jump" && !keys.jump) jumpBuf=130; keys[m]=true; try{ b.setPointerCapture(e.pointerId); }catch(_){} };
+    const off=()=>{ keys[m]=false; };
+    b.addEventListener("pointerdown",on); ["pointerup","pointercancel","lostpointercapture"].forEach(ev=>b.addEventListener(ev,off));
+    b.addEventListener("contextmenu",e=>e.preventDefault());
+  }
+  hold("bl","left"); hold("br","right"); hold("bj","jump");
+  document.getElementById("rp").onclick=()=>setPause(!paused);
+  document.getElementById("rsay").onclick=()=>say(qs[qi].d);
+  veil.onclick=()=>setPause(false);
+  document.addEventListener("keydown",onDown); document.addEventListener("keyup",onUp);
+  document.addEventListener("visibilitychange",onVis); window.addEventListener("resize",fit);
+  stopCurrent=stop;
+  fit(); build(); hudTimer();
+  cv.scrollIntoView({block:"center",behavior:"smooth"});
+  raf=requestAnimationFrame(loop);
+}
+
+/* ===== Result ===== */
+function result(level,{pct,stars,missed=[],detail,title,mistakeRate}){
+  leave();
+  if(stars===undefined) stars = pct>=0.9?3 : pct>=0.7?2 : pct>=0.4?1 : 0;
+  saveBest(level,stars);
+  let gate="";
+  if(mistakeRate!==undefined){
+    const wasOpen=bossUnlocked(); saveProg(level,mistakeRate); const nowOpen=bossUnlocked();
+    const ok=mistakeRate<=UNLOCK.MAX_MISTAKE_RATE+1e-9, limit=pctStr(UNLOCK.MAX_MISTAKE_RATE);
+    gate = !wasOpen && nowOpen
+      ? `<div class="review" style="text-align:center;background:linear-gradient(120deg,#2a1b5e,#47208a);color:#fff"><h3 style="font-size:22px">🐉 Boss Battle unlocked!</h3>You passed Levels 1–4. The Word Dragon is waiting…</div>`
+      : `<div class="review" style="text-align:center;border:3px solid ${ok?"var(--good)":"var(--bad)"}"><b>Mistakes: ${pctStr(mistakeRate)}</b> – ${ok?`✅ passed (${limit} or fewer)`:`need ${limit} or fewer to count toward the Boss Battle. Try again!`}</div>`;
+  }
+  const nextBtn = level===4 ? (bossUnlocked()?`<button class="btn" id="nextL">🐉 Boss Battle ➡️</button>`:`<button class="btn" id="toMenu">🏠 Menu</button>`)
+                : level!==4 && level<6 ? `<button class="btn" id="nextL">Level ${level+1} ➡️</button>` : `<button class="btn" id="toMenu">🏠 Menu</button>`;
+  const msg = stars===3?"Amazing! You're a word champion! 🏆" : stars===2?"Great work! Almost perfect! 👏" : stars===1?"Good try! Practise a bit more. 💪" : "Keep going – you'll get there! 🌱";
+  const seen=new Set(); missed=missed.filter(o=>!seen.has(o.id)&&seen.add(o.id));
+  $app.innerHTML=`
+    <div class="result">
+      <h1>${esc(title||`Level ${level} complete!`)}</h1>
+      <div class="bigstars">${starStr(stars)}</div>
+      <p class="score">${esc(detail)}</p>
+      <p style="font-size:20px;font-weight:700;margin:6px 0 0">${msg}</p>
+    </div>
+    ${gate}
+    ${missed.length?`<div class="review"><h3>📌 Words to practise (tap to hear)</h3><div class="chips">${missed.map(o=>`<button class="chip" data-id="${o.id}" title="${esc(o.d)}">${o.p?o.p+" ":""}${esc(o.w)}</button>`).join("")}</div></div>`:""}
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="again">🔁 Play again</button>
+      ${nextBtn}
+    </div>`;
+  $app.querySelectorAll(".chip").forEach(b=>b.onclick=()=>say(WORDS[+b.dataset.id].w));
+  document.getElementById("again").onclick=()=>startLevel(level);
+  const n=document.getElementById("nextL"); if(n) n.onclick=()=>startLevel(level+1);
+  const m=document.getElementById("toMenu"); if(m) m.onclick=menu;
+  if(stars>=2) confetti();
+  window.scrollTo(0,0);
+}
+
+menu();
+</script>
+</body>
+</html>
